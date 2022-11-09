@@ -1,11 +1,16 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import UsersView from '@/views/UsersView.vue'
 
 
 Vue.use(VueRouter)
 
 const routes = [
-
+  {
+    path: '/users',
+    name: 'users',
+    component: UsersView,
+  },
   {
     path: '/about',
     name: 'about',

@@ -7,7 +7,7 @@
           
           to="/"
         >
-          <Books />
+          
           Início
         </v-btn>
         
@@ -16,7 +16,7 @@
           
           to="/publishing"
         >
-          <Books />
+          
           Editora
         </v-btn>
 
@@ -25,7 +25,7 @@
           
           to="/books"
         >
-          <Books />
+          
           Livros
         </v-btn>
 
@@ -34,7 +34,7 @@
           
           to="/rent"
         >
-          <Books />
+         
           Aluguéis
         </v-btn>
 
@@ -43,14 +43,16 @@
           
           to="/users"
         >
-          <Books />
+          
           Usuários
         </v-btn>
 
       </v-navigation-drawer>
       
   
-      <v-app-bar app>
+      <v-app-bar app
+          color="deep-purple accent-4"
+          dark>
         <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
   
         <v-toolbar-title>WDA BOOKSTORE</v-toolbar-title>
@@ -65,7 +67,7 @@
   <script>
     export default {
     name: "NavbarComp",
-    data: () => ({ drawer: true })
+    data: () => ({ drawer: false })
 }
   </script>
 
@@ -96,4 +98,3 @@
     color: blue;
   }
 </style>
-
