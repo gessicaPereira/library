@@ -6,7 +6,6 @@
       <v-row>
         <v-col>
     <v-data-table
-      sort-by="calories"
       class="elevation-1"
       :headers="headers" 
       :search="search" 
@@ -301,3 +300,8 @@ import users from '@/service/users'
   }
 }
 </script>
+<style>
+#user{
+  margin-top: -325px;
+}
+</style>

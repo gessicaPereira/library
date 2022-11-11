@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import UsersView from '@/views/UsersView.vue'
+import PublishingView from '@/views/PublishingView.vue'
+import BooksView from '@/views/BooksView.vue'
 
 
 Vue.use(VueRouter)
@@ -10,6 +12,16 @@ const routes = [
     path: '/users',
     name: 'users',
     component: UsersView,
+  },
+  {
+    path: '/publishing',
+    name: 'publishing',
+    component: PublishingView,
+  },
+  {
+    path: '/books',
+    name: 'books',
+    component: BooksView,
   },
   {
     path: '/about',
