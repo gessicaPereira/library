@@ -108,6 +108,7 @@
     data: () => ({
       dialog: false,
       dialogDelete: false,
+      valid: true,
       headers: [
         { text: 'Id', value: 'id'},
         { text: 'Nome', value: 'name' },

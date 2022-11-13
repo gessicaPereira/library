@@ -1,15 +1,15 @@
 <template>
-    <div id="book">
+    <div id="books">
     <v-app>
     <v-main class="blue accent-2">
       <v-container>
         <v-row>
           <v-col>
-      <v-data-table 
+      <v-data-table
         class="elevation-1"
         :headers="headers" 
         :search="search" 
-        :items="book">
+        :items="book"> 
         <template v-slot:top>
           <v-toolbar flat>
             <v-toolbar-title>Livros</v-toolbar-title>
@@ -34,7 +34,7 @@
                   v-bind="attrs"
                   v-on="on"
                 >
-                  + Novo livro 
+                  + Novo livro  
                 </v-btn>
               </template>
               <v-card>
@@ -43,104 +43,69 @@
                                               <v-form ref="form" v-model="valid" lazy-validation>
                                                   <v-text-field
                                                       v-model="editedItem.name"
+                                                      append-icon="mdi-book-open-page-variant"
                                                       :rules="[rules.required, rules.max, rules.min]"
-                                                        :counter="80" label="Nome"
-                                                  ></v-text-field>
-  
+                                                      :counter="80" 
+                                                        label="Nome">
+                                                  </v-text-field>
+                                                  
                                                   <v-text-field
                                                       v-model="editedItem.author"
+                                                      append-icon="mdi-account-box-outline"
                                                       :rules="[rules.required, rules.max, rules.min]"
-                                                        :counter="80" label="Autor"
-                                                      
+                                                      :counter="80"
+                                                      label="Autor"
                                                   ></v-text-field>
-  
 
-                                                  <v-select
-                                                    v-model="editedItem.publishing"
-                                                    :rules="[rules.required]"
-                                                    :items="publishings.content" 
-                                                    item-text="name"
-                                                    item-value="publishingId"
-                                                    label="Editora*"
-                                                    return-object
-                                                    append-icon="mdi-bookshelf"
-                                                    required
-                                                    color="#198754"
-                                                ></v-select>
+                                                  <v-text-field v-model="editedItem.quantity" type="number"
+                                                        :rules="[rules.required, rules.minNumber]" label="Quantidade">
+                                                    </v-text-field>
 
-                                                <v-menu
-                                                    v-if="editedIndex == -1"
-                                                    v-model="menu1"
-                                                    :close-on-content-click="false"
-                                                    :nudge-right="40"
-                                                    transition="scale-transition"
-                                                    offset-y
-                                                    max-width="290px"
-                                                    min-width="auto"
-                                                >
-  
-                                                  <v-text-field
-                                                      v-model="editedItem.quantity" type="number"
-                                                      :rules="[rules.required, rules.minNumber]" label="Quantidade">
-                                                  ></v-text-field>
+                                                  <v-select v-model="editedItem.publishing" :items="publisher" item-text="name"
+                                                    item-value="id" :rules="[rules.required]" label="Editora">
+                                                  </v-select>
+
+                                                  <v-menu
+                                                        v-model="modal"
+                                                        :nudge-right="0"
+                                                        :close-on-content-click="false"
+                                                        transition="slide-y-transition"
+                                                        offset-y
+                                                        min-width="auto"
+                                                    > 
 
                                                   <template v-slot:activator="{ on, attrs }">
                                                         <v-text-field
-                                                            :value="launchDateFormatted"
-                                                            
-                                                            label="Data de lançamento*"
-                                                            append-icon="mdi-calendar"
-                                                            readonly
-                                                            id="launch"
-                                                            required
-                                                            v-bind="attrs"
-                                                            v-on="on"
-                                                            color="#198754"
-                                                        ></v-text-field>
-                                                    </template>
-                                                    <v-date-picker
                                                         v-model="editedItem.launch"
-                                                        :min="dataAtual"
-                                                        @input="menu1 = false"
-                                                        color="#198754"
-                                                    ></v-date-picker>
+                                                        label="Data de lançamento"
+                                                        append-icon="mdi-calendar"
+                                                        readonly
+                                                        v-bind="attrs"
+                                                        v-on="on"
+                                                        :rules="[rules.required]"
+                                                        ></v-text-field>
+                                                    </template> 
 
-                                </v-menu>
-                                <v-menu
-                                                    v-if="editedIndex != -1"
-                                                    v-model="menu2"
-                                                    :close-on-content-click="false"
-                                                    :nudge-right="40"
-                                                    transition="scale-transition"
-                                                    offset-y
-                                                    max-width="290px"
-                                                    min-width="auto"
-                                                >
-                                                    <template v-slot:activator="{ on, attrs }">
-                                                        <v-text-field
-                                                            :value="launchDateFormatted"
-                                                            
-                                                            label="Data de lançamento*"
-                                                            append-icon="mdi-calendar"
-                                                            readonly
-                                                            id="launch"
-                                                            required
-                                                            v-bind="attrs"
-                                                            v-on="on"
-                                                            color="#198754"
-                                                        ></v-text-field>
-                                                    </template>
+
+                                                
                                                     <v-date-picker
                                                         v-model="editedItem.launch"
-                                                        :max="dataAtual"
-                                                        :min="dataAtual"
-                                                        @input="menu2 = false"
-                                                        color="#198754"
+                                                        @input="modal = false"
+                                                        locale="pt-br"
+                                                        color="c500"
+                                                        :max="todayDate"
                                                     ></v-date-picker>
-                                                </v-menu>
-                                              </v-form>
-                                              
-                                          </v-container>
+                                                    </v-menu>
+
+
+                                                    <template v-slot:[`item.rentedQuantity`]="{ item }">
+                                                        <v-chip color="c700" dark>
+                                                        {{ item.rentedQuantity }}
+                                                        </v-chip>
+                                                    </template>
+
+                                        </v-form>
+                                        </v-container>
                                       </v-card-text>
                                       <v-card-actions>
                                           <v-spacer></v-spacer>
@@ -153,26 +118,9 @@
                                       </v-card-actions>
                                   </v-card>
                               </v-dialog>
-            <v-dialog v-model="dialogDelete" max-width="500px">
-              <v-card>
-                <v-card-title class="text-h5">Deseja deletar este livro?</v-card-title>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn color="blue darken-1" text @click="closeDelete">Cancelar</v-btn>
-                  <v-btn color="blue darken-1" text @click="deleteItemConfirm">Sim</v-btn>
-                  <v-spacer></v-spacer>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
+                              
           </v-toolbar>
         </template>
-        
-        <template v-slot:[`item.quantity`]="{ item }">
-                    <v-chip class="elevation-3">
-                      {{ item.quantity }}
-                    </v-chip>
-        </template>
-
         <template v-slot:[`item.actions`]="{ item }">
           <v-icon size="22" color="blue" small class="mr-2" @click="editItem(item)">
             mdi-pencil
@@ -193,65 +141,69 @@
     </template>
    
   <script>
-  import books from '@/service/books'
-  import publishing from '@/service/publishing'
-  import moment from "moment"
-
+import books from '@/service/books'
+import publishing from '@/service/publishing'
+import moment from 'moment'
 
     export default {
     data: () => ({
       dialog: false,
       dialogDelete: false,
-      date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10),
-      nowDate: new Date().toISOString().slice(0, 10),
+      modal: false,
+      valid: true,
+      todayDate: new Date().toISOString().slice(0, 10),
       headers: [
-        { text: 'Id', value: 'id'},
+        { text: 'Id', align: 'start', value: 'id'},
         { text: 'Nome', value: 'name' },
         { text: 'Autor', value: 'author' },
-        { text: 'Editora', value: 'publishing.name' },
-        {text: 'Quantidade', value: 'quantity'},
-        { text: 'Ações', value: 'actions', sortable: false },
-      ],
+        {text: 'Editora', value: 'publishing.name'},
+        {
+        text: 'Lançamento',
+        value: 'launch',
+        sortable: false,
+        align: 'center',
+      },
+      { text: 'Quantidade', value: 'quantity', align: 'center' },
+      { text: 'Alugados', value: 'rentedQuantity', align: 'center' },
+      { text: 'Ações', value: 'actions', sortable: false, align: 'center' },
+    ],
+
       book: [],
-      publishings: [],
-      launchDateFormated: [],
-      valid: true,
-            menu1: false,
-            menu2: false,
-            dataAtual: '',
+      publisher: [],
       search: '',
       editedIndex: -1,
       editedItem: {
+        id: 0,
         name: '',
-        author: '',
-        launch: '',
         quantity: '',
-        publishing: {
-            publishingId: '',
-            name: '',
-            city: '',
-        }
+        rentedQuantity: 0,
+        launch: '',
+        author: '',
+        publishing: null,
+        publishingId: 0,
       },
       defaultItem: {
+        id: 0,
         name: '',
-        author: '',
-        publishingId: 0,
-        publishing: '',
-        launch: '',
         quantity: '',
+        rentedQuantity: 0,
+        launch: '',
+        author: '',
+        publishing: null,
+        publishingId: 0,
       },
       rules: {
-      required: (value) => !!value || 'Este campo é obrigatório.',
-      max: (value) => value.length <= 80 || 'Máximo de 80 caracteres.',
-      maxAutor: (value) => value.length <= 80 || 'Máximo de 80 caracteres.',
-      min: (value) => value.length >= 3 || 'Mínimo de 3 caracteres.',
-      minNumber: (value) => value >= 0 || 'No mínimo 1 é necessário.'
-    },
-      }),
-  
+                required: (value) => !!value || 'Este campo é obrigatório.',
+                max: (value) => value.length <= 80 || 'Máximo de 80 caracteres.',
+                maxEditora: (value) => value.length <= 80 || 'Máximo de 80 caracteres.',
+                min: (value) => value.length >= 3 || 'Mínimo de 3 caracteres.',
+                minQuantity: (value) => value.length >=1 || 'A quantidade não pode ser menor que 1! ',
+            },
+    }),
+
       computed: {
         formTitle () {
-          return this.editedIndex === -1 ? 'Novo livro' : 'Editar livro'
+          return this.editedIndex === -1 ? 'Nova livro' : 'Editar livro'
         },
       },
   
@@ -268,60 +220,69 @@
         this.initialize()
       },
       
-      methods: {
-      initialize() {
-        this.book = [
-          {
-            name: '',
-            city: '',
-          },
-        ]
-      },
-
-      async listBook() {
-      await books.getAll()
-        .then((response) => {
-          this.books = response.data;
-          this.books.forEach(item => {
-            item.launch = this.listDate(item.launch)
-          })
-        
-          this.loading = false  
-        
-        })
-    },
-    async listPublishing() {
-      await publishing.getAll()
-        .then((response) => {
-          this.publishers = response.data;
-        })
-        .catch((e) => {
-          console.log(e);
+  methods: {
+    async initialize() {
+      await books.getAll().then((res) => {
+        this.book = res.data.content;
+        this.book.forEach((item) => {
+          item.launch = this.parseDate(item.launch);
         });
+        publishing.getAll().then((res) => {
+          this.publisher = res.data.content;
+        });
+        this.isLoading = false;
+      });
     },
-    
-    listDate(date) {
-      return moment(date).format('DD/MM/YYYY');
+
+    parseDate(date) {
+      return moment(date).format('DD-MM-yyyy');
     },
-        
-    editItem(item) {
-      this.editedIndex = item.id
-      this.editedItem = { ...item }
-      this.editedItem.launch = this.editDate(this.editedItem.launch)
-      this.dialog = true
+
+    parseDateISO(date) {
+      const [dd, mm, yyyy] = date.split('-')
+      return `${yyyy}-${mm}-${dd}`
     },
+  
+        editItem (item) {
+          this.editedIndex = item.id
+          this.editedItem = Object.assign({}, item)
+          this.editedItem.launch = this.parseDateISO(item.launch);
+          this.dialog = true;
+        },
   
         deleteItem (item) {
           this.editedIndex = item.id
           this.editedItem = Object.assign({}, item)
           this.dialogDelete = true
+          this.deleteItemConfirm()
         },
   
         deleteItemConfirm () {
-          this.deleteBook()
-          this.closeDelete()
-        },
-  
+        this.$swal({
+        title: 'Você deseja deletar esse livro?',
+        icon: 'warning',
+        showDenyButton: true,
+        confirmButtonText: 'Deletar',
+        denyButtonText: 'Cancelar',
+        allowOutsideClick: false,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.delete();
+        } else if (result.isDenied) {
+          this.$swal({
+            title: 'Deleção interrompida!',
+            icon: 'info',
+            allowOutsideClick: false,
+          });
+        }
+        this.$nextTick(() => {
+          this.editedItem = Object.assign({}, this.defaultItem);
+          this.editedIndex = -1;
+          this.$refs.form.resetValidation();
+        });
+      });
+    },
+
         close () {
           this.dialog = false
           this.$nextTick(() => {
@@ -340,37 +301,39 @@
         },
   
         save() {
-        if (this.$refs.form.validate()) {
-          if (this.editedIndex > -1) {
-            this.atualizationBook()
-          } else {
-            this.createBook()
-          }
-          this.close()
-        }
-      },
+      if (!this.$refs.form.validate()) return;
+      this.editedItem.publishingId =
+        this.editedItem.publishing.id ?? this.editedItem.publishing;
+      if (this.editedIndex > -1) {
+        this.updateBook();
+      } else {
+        this.createBook();
+      }
+      this.close();
+    },
   
       async createBook() {
-        await books.post(this.editedItem).then(() => this.listBook()).then(() => this.showAlertSuccessPost()).then(() => this.close())
+        await books.post(this.editedItem).then(() => this.initialize()).then(() => this.showAlertSuccessPost()).then(() => this.close())
           .catch((e) => {
             this.showAlertErrorPost()
             console.log(e)
           })
       },
     
-      async atualizationBook() {
-      await books.update(this.editedIndex, this.editedItem).then(() => this.listBook())
-        .catch((e) => {
-          console.log(e)
-        })
-    },
+      async updateBook() {
+        await books.put(this.editedIndex, this.editedItem).then(() => this.initialize()).then(() => this.showAlertSuccessUpdate()).then(() => this.close())
+          .catch((e) => {
+            this.showAlertErrorUpdate()
+            console.log(e)
+          })
+      },
   
-    async deleteBook() {
-      await books.delete(this.editedIndex).then(() => this.listBook()).then(() => this.showAlertSuccessDelete())
-        .catch((e) => {
-          this.showAlertError2()
-          console.log(e)
-        })
+      async delete() {
+        await books.delete(this.editedIndex).then(() => this.initialize()).then(() => this.showAlertSuccessDelete())
+          .catch((e) => {
+            this.showAlertErrorDelete()
+            console.log(e)
+          })
         },  
         showAlertSuccessPost() {
         this.$swal("", "Livro cadastrado com sucesso!", "success");
@@ -379,18 +342,21 @@
       showAlertSuccessDelete() {
         this.$swal("", "Livro deletado com sucesso!", "success");
       },
+      showAlertSuccessUpdate() {
+        this.$swal("", "Livro atualizado com sucesso!", "success");
+      },
         showAlertErrorPost() {
-        this.$swal("Não foi possível cadastrar", "error");
+        this.$swal("Não foi possível cadastrar", "Já existe uma editora com esse nome!", "error");
       }, 
-      showAlertError2() {
-      this.$swal("Erro", "Esse livro está alugado!", "error");
-    },
-    mounted() {
-      this.listBook();
-      this.listPublishing();
-    },
-}}
+      showAlertErrorDelete() {
+        this.$swal("Atenção", "Esse livro tem um ou mais aluguéis associados!", "error");
+      },
+    }}
   </script>
+  <style>
+  #app{
+    margin-top: -325px;
 
-
+  }
+  </style>
   
