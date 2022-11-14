@@ -32,7 +32,7 @@
         <v-btn block id="aluguel"
           depressed tile class="block"
           
-          to="/rent"
+          to="/rents"
         >
          
           Aluguéis
