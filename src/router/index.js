@@ -4,6 +4,7 @@ import UsersView from '@/views/UsersView.vue'
 import PublishingView from '@/views/PublishingView.vue'
 import BooksView from '@/views/BooksView.vue'
 import RentsView from '@/views/RentsView.vue'
+import HomeView from '@/views/HomeView.vue'
 
 
 Vue.use(VueRouter)
@@ -28,6 +29,11 @@ const routes = [
     path: '/rents',
     name: 'rents',
     component: RentsView,
+  },
+  {
+    path: '/',
+    name: 'home',
+    component: HomeView,
   },
   {
     path: '/about',

@@ -72,7 +72,7 @@
 
                                                 <template v-slot:activator="{ on, attrs }">
                                                 <v-text-field
-                                                v-model="editedItem.rentalDate"
+                                                v-model="editedItem.rental_date"
                                                 label="Data de aluguel"
                                                 append-icon="mdi-calendar"
                                                 readonly
@@ -83,7 +83,7 @@
                                             </template>
 
                                             <v-date-picker
-                                            v-model="editedItem.rentalDate"
+                                            v-model="editedItem.rental_date"
                                             @input="modal = false"
                                             locale="pt-br"
                                             color="c500"
@@ -103,7 +103,7 @@
 
                                         <template v-slot:activator="{ on, attrs }">
                                         <v-text-field
-                                        v-model="editedItem.forecastReturn"
+                                        v-model="editedItem.forecast_return"
                                         label="Previsão de retorno"
                                         append-icon="mdi-calendar"
                                         readonly
@@ -114,12 +114,12 @@
                                     </template>
 
                                     <v-date-picker
-                                    v-model="editedItem.forecastReturn"
+                                    v-model="editedItem.forecast_return"
                                     @input="modal2 = false"
                                     locale="pt-br"
                                     color="c500"
                                     scrollable
-                                    :min="editedItem.rentalDate"
+                                    :min="editedItem.rental_date"
                                 ></v-date-picker>
                                 </v-menu>
                                         </v-form>
@@ -208,9 +208,9 @@ import moment from 'moment'
         id: 0,
         user: null,
         book: null,
-        rentalDate: '',
-        forecastReturn: '',
-        returnDate: '',
+        rental_date: '',
+        forecast_return: '',
+        return_date: '',
         userId: 0,
         bookId: 0,
       },
@@ -218,9 +218,9 @@ import moment from 'moment'
         id: 0,
         user: null,
         book: null,
-        rentalDate: '',
-        forecastReturn: '',
-        returnDate: '',
+        rental_date: '',
+        forecast_return: '',
+        return_date: '',
         userId: 0,
         bookId: 0,
       },
@@ -256,22 +256,37 @@ import moment from 'moment'
       },
       
   methods: {
-    async initialize() {
+    async listRent() {
       await rent.getAll().then((res) => {
-        this.rents = res.data.content;
+        this.rents = res.data;
         this.rents.forEach((item) => {
-          item.rentalDate = this.parseDate(item.rentalDate)
-          item.forecastReturn = this.parseDate(item.forecastReturn)
-          item.returnDate = this.formatReturnDate(item.returnDate)
+          item.rental_date = this.parseDate(item.rental_date)
+          item.forecast_return = this.parseDate(item.forecast_return)
+          item.return_date = this.formatReturnDate(item.return_date)
         })
-        books.getAll().then((res) => {
-          this.book = res.data.content;
-        })
-        users.getAll().then((res) => {
-            this.user = res.data.content
-        })
-        this.isLoading = false;
     })
+    },
+
+    async listUser() {
+      await users.getAll()
+        .then((response) => {
+          this.users = response.data;
+          console.log(response.data);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    },
+
+    async listBook() {
+      await books.getAll()
+        .then((response) => {
+          this.books = response.data;
+          console.log(response.data);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
     },
 
     parseDate(date) {
@@ -294,9 +309,9 @@ import moment from 'moment'
             if(isDisaled) return;
           this.editedIndex = item.id
           this.editedItem = Object.assign({}, item)
-          this.editedItem.rentalDate = this.parseDateISO(item.rentalDate)
-          this.editedItem.forecastReturn = this.parseDateISO(item.forecastReturn)
-          this.editedItem.returnDate = ''
+          this.editedItem.rental_date = this.parseDateISO(item.rentalDate)
+          this.editedItem.forecast_return = this.parseDateISO(item.forecast_return)
+          this.editedItem.rental_date = ''
           this.dialog = true
         },
 
@@ -396,7 +411,7 @@ import moment from 'moment'
     async insert() {
       await rent
         .post(this.editedItem)
-        .then(() => this.initialize())
+        .then(() => this.listRent())
         .then(() => {
           this.$swal({
             title: 'Sucesso',
@@ -425,7 +440,7 @@ import moment from 'moment'
     async update() {
       await rent
         .put(this.editedIndex, this.editedItem)
-        .then(() => this.initialize())
+        .then(() => this.listRent())
         .then(() => {
           this.$swal({
             title: 'Sucesso',
@@ -453,8 +468,8 @@ import moment from 'moment'
 
     async returnBook() {
       await rent
-        .returnBook(this.store.getToken.value, this.editedIndex)
-        .then(() => this.initialize())
+        .returnBook(this.editedIndex)
+        .then(() => this.listRent())
         .then(() => {
           this.$swal({
             title: 'Sucesso',
@@ -477,7 +492,7 @@ import moment from 'moment'
     async delete() {
       await rent
         .delete(this.store.getToken.value, this.editedIndex)
-        .then(() => this.fetchApi())
+        .then(() => this.listRent())
         .then(() => {
           this.$swal({
             title: 'Sucesso',

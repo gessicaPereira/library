@@ -5,7 +5,7 @@
         <v-btn block id="inicio"
           depressed tile class="block"
           
-          to="/"
+          to="/home"
         >
           
           Início
