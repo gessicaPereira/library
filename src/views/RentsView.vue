@@ -259,13 +259,15 @@ import moment from 'moment'
           item.rental_date = this.parseDate(item.rental_date)
           item.forecast_return = this.parseDate(item.forecast_return)
           item.return_date = this.formatReturnDate(item.return_date)
+          console.log(res.data.content)
         })
         books.getAll().then((res) => {
-          this.book = res.data;
-          console.log(res.data)
+          this.booker = res.data.content;
+          console.log(res.data.content)
         })
         users.getAll().then((res) => {
-            this.user = res.data;
+            this.useres = res;
+            console.log(res.data.content)
         })
         this.isLoading = false;
     })

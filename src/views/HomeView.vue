@@ -13,7 +13,7 @@
 
                   <v-card-text class="font-weight-black">
                         <v-chip>
-                            {{ books.length }}
+                            {{ book.length }}
                         </v-chip>
                     </v-card-text>
                 </v-card>
@@ -30,7 +30,7 @@
                     </v-card-title>
                     <v-card-text class="font-weight-black">
                         <v-chip>
-                            {{ publishing.length }}
+                            {{ publishings.length }}
                         </v-chip>
                     </v-card-text>
                 </v-card>
@@ -47,7 +47,7 @@
                     </v-card-title>
                     <v-card-text class="font-weight-black">
                         <v-chip>
-                            {{ users.length }}
+                            {{ user.length }}
                         </v-chip>
                     </v-card-text>
                 </v-card>
@@ -64,7 +64,7 @@
                     </v-card-title>
                     <v-card-text class="font-weight-black">
                         <v-chip>
-                            {{ rent.length }}
+                            {{ rents.length }}
                         </v-chip>
                     </v-card-text>
                 </v-card>
@@ -102,10 +102,10 @@
                             <v-col>Nome do leitor: {{ rents[0].user.name }}</v-col>
                         </v-row>
                         <v-row>
-                            <v-col>Data em que alugou: {{ rentDate }}</v-col>
+                            <v-col>Data em que alugou: {{ rental_date }}</v-col>
                         </v-row>
                         <v-row>
-                            <v-col>Data de previsão de entrega: {{ rentPredict }}</v-col>
+                            <v-col>Data de previsão de entrega: {{ forecast_return }}</v-col>
                         </v-row>
                     </v-card-text>
                 </v-card>
@@ -150,7 +150,7 @@ export default{
     data: () => ({
         book: [],
         user: [],
-        publishing: [],
+        publishings: [],
         rents: [],
 
         firstRented: [],
@@ -176,7 +176,7 @@ export default{
 
     methods: {
         async updateDash() {
-            await books.getAllBooks()
+            await books.getAll()
                 .then((response) => {
                     this.book = response.data.content;
                     console.log(this.book);
@@ -190,33 +190,33 @@ export default{
                 .then(() => {
                     this.updateGraphic();
                 }),
-                publishing.getAllPublishers().then((response) => {
-                    this.publishing = response.data.content;
+                publishing.getAll().then((response) => {
+                    this.publishings = response.data.content;
                 }),
-                rent.getAllRents().then((response) => {
+                rent.getAll().then((response) => {
                     this.rents = response.data.content;
                     this.rental_date = moment(this.rents[0].rental_date).subtract(1, 'months').format('DD/MM/YYYY');
                     this.forecast_return = moment(this.rents[0].forecast_return).subtract(1, 'months').format('DD/MM/YYYY');
                 }),
-                users.getAllUsers().then((response) => {
+                users.getAll().then((response) => {
                     this.user = response.data.content;
                 });
         },
       },
       updateGraphic() {
-            this.book.sort((a, b) => a.leaseQuantity - b.leaseQuantity);
+            this.book.sort((a, b) => a.quantityRented - b.quantityRented);
         },
         getFirstRent() {
             this.chartData.labels.unshift(this.firstRented.name);
-            this.chartData.datasets[0].data.push(this.firstRented.leaseQuantity);
+            this.chartData.datasets[0].data.push(this.firstRented.quantityRented);
         },
         getSecondRent() {
             this.chartData.labels.unshift(this.secondRented.name);
-            this.chartData.datasets[0].data.push(this.secondRented.leaseQuantity);
+            this.chartData.datasets[0].data.push(this.secondRented.quantityRented);
         },
         getThirtRent() {
             this.chartData.labels.push(this.thirtRented.name);
-            this.chartData.datasets[0].data.push(this.thirtRented.leaseQuantity);
+            this.chartData.datasets[0].data.push(this.thirtRented.quantityRented);
         },
 
     mounted() {
