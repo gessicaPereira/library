@@ -13,13 +13,13 @@
         <template v-slot:top>
           <v-toolbar flat>
             <v-toolbar-title>Aluguéis</v-toolbar-title>
-  
+
             <v-divider class="mx-5" inset vertical></v-divider>
-      
+
             <v-text-field v-model="search" append-icon="mdi-magnify" label="Pesquisar" color="blue"
                           single-line hide-details>
                           </v-text-field>
-  
+
             <v-spacer></v-spacer>
             <v-dialog
               v-model="dialog"
@@ -42,7 +42,7 @@
                                           <v-container>
                                               <v-form ref="form" v-model="valid" lazy-validation>
                                                 <v-select
-                                                :items="book"
+                                                :items="booker"
                                                 item-text="name"
                                                 item-value="id"
                                                 v-model="editedItem.book"
@@ -50,9 +50,9 @@
                                                 label="Nome do livro"
                                                 :rules="[rules.required]"
                                                 ></v-select>
-                                                  
+
                                                 <v-select
-                                                :items="user"
+                                                :items="useres"
                                                 item-text="name"
                                                 item-value="id"
                                                 v-model="editedItem.user"
@@ -136,7 +136,7 @@
                                       </v-card-actions>
                                   </v-card>
                               </v-dialog>
-                              
+
           </v-toolbar>
         </template>
 
@@ -158,13 +158,12 @@
     </v-app>
     </div>
     </template>
-   
+
   <script>
 import books from '@/service/books'
 import rent from '@/service/rent'
 import users from '@/service/users'
 import moment from 'moment'
-
     export default {
     data: () => ({
       dialog: false,
@@ -177,31 +176,29 @@ import moment from 'moment'
         { text: 'Id', align: 'start', value: 'id'},
         { text: 'Livro', value: 'book.name' },
         { text: 'Usuário', value: 'user.name' },
-        {text: 'Editora', value: 'publishing.name'},
         {
         text: 'Aluguel',
-        value: 'rentalDate',
+        value: 'rental_date',
         sortable: false,
         align: 'center',
       },
       {
         text: 'Previsão',
-        value: 'forecastReturn',
+        value: 'forecast_return',
         sortable: false,
         align: 'center',
       },
       {
         text: 'Devolução',
-        value: 'returnDate',
+        value: 'return_date',
         sortable: false,
         align: 'center',
       },
       { text: 'Ações', value: 'actions', sortable: false, align: 'center' },
     ],
-
       rents: [],
-      book: [],
-      user: [],
+      booker: [],
+      useres: [],
       search: '',
       editedIndex: -1,
       editedItem: {
@@ -232,7 +229,6 @@ import moment from 'moment'
                 minQuantity: (value) => value.length >=1 || 'A quantidade não pode ser menor que 1! ',
             },
     }),
-
       computed: {
         formTitle () {
           return this.editedIndex === -1 ? 'Nova aluguel' : 'Editar aluguel'
@@ -256,48 +252,31 @@ import moment from 'moment'
       },
       
   methods: {
-    async listRent() {
+    async initialize() {
       await rent.getAll().then((res) => {
-        this.rents = res.data;
+        this.rents = res.data.content;
         this.rents.forEach((item) => {
           item.rental_date = this.parseDate(item.rental_date)
           item.forecast_return = this.parseDate(item.forecast_return)
           item.return_date = this.formatReturnDate(item.return_date)
         })
+        books.getAll().then((res) => {
+          this.book = res.data;
+          console.log(res.data)
+        })
+        users.getAll().then((res) => {
+            this.user = res.data;
+        })
+        this.isLoading = false;
     })
     },
-
-    async listUser() {
-      await users.getAll()
-        .then((response) => {
-          this.users = response.data;
-          console.log(response.data);
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    },
-
-    async listBook() {
-      await books.getAll()
-        .then((response) => {
-          this.books = response.data;
-          console.log(response.data);
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    },
-
     parseDate(date) {
       return moment(date).format('DD-MM-yyyy');
     },
-
     parseDateISO(date) {
       const [dd, mm, yyyy] = date.split('-')
       return `${yyyy}-${mm}-${dd}`
     },
-
     formatReturnDate(data) {
       if (!/^[0-9]+/.test(data)) return data;
       let dateToPrint = this.parseDate(data.substring(0, 10))
@@ -309,12 +288,11 @@ import moment from 'moment'
             if(isDisaled) return;
           this.editedIndex = item.id
           this.editedItem = Object.assign({}, item)
-          this.editedItem.rental_date = this.parseDateISO(item.rentalDate)
+          this.editedItem.rental_date = this.parseDateISO(item.rental_date)
           this.editedItem.forecast_return = this.parseDateISO(item.forecast_return)
-          this.editedItem.rental_date = ''
+          this.editedItem.return_date = ''
           this.dialog = true
         },
-
         returnItem(item) {
         this.editedIndex = item.id;
         this.returnItemConfirm();
@@ -326,7 +304,6 @@ import moment from 'moment'
           this.dialogDelete = true
           this.deleteItemConfirm()
         },
-
         
     returnItemConfirm() {
       this.$swal({
@@ -377,7 +354,6 @@ import moment from 'moment'
         });
       });
     },
-
         close () {
           this.dialog = false
           this.$nextTick(() => {
@@ -411,7 +387,7 @@ import moment from 'moment'
     async insert() {
       await rent
         .post(this.editedItem)
-        .then(() => this.listRent())
+        .then(() => this.initialize())
         .then(() => {
           this.$swal({
             title: 'Sucesso',
@@ -436,11 +412,10 @@ import moment from 'moment'
           });
         });
     },
-
     async update() {
       await rent
         .put(this.editedIndex, this.editedItem)
-        .then(() => this.listRent())
+        .then(() => this.initialize())
         .then(() => {
           this.$swal({
             title: 'Sucesso',
@@ -465,11 +440,10 @@ import moment from 'moment'
           });
         });
     },
-
     async returnBook() {
       await rent
-        .returnBook(this.editedIndex)
-        .then(() => this.listRent())
+        .devolution(this.editedIndex)
+        .then(() => this.initialize())
         .then(() => {
           this.$swal({
             title: 'Sucesso',
@@ -487,12 +461,11 @@ import moment from 'moment'
           window.Toast.fire('Erro ao devolver livro', '', 'error');
         });
     },
-
     
     async delete() {
       await rent
-        .delete(this.store.getToken.value, this.editedIndex)
-        .then(() => this.listRent())
+        .delete(this.editedIndex)
+        .then(() => this.fetchApi())
         .then(() => {
           this.$swal({
             title: 'Sucesso',
@@ -539,7 +512,5 @@ import moment from 'moment'
   <style>
   #app{
     margin-top: -325px;
-
   }
   </style>
-  

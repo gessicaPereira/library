@@ -124,7 +124,7 @@ import users from '@/service/users'
   data: () => ({
     dialog: false,
     dialogDelete: false,
-    valid: true,
+    valid: false,
     headers: [
       { text: 'Id', value: 'id'},
       { text: 'Nome', value: 'name' },
@@ -303,6 +303,6 @@ import users from '@/service/users'
 </script>
 <style>
 #user{
-  margin-top: -325px;
+  margin-top: -325x;
 }
 </style>
