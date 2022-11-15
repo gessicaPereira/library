@@ -45,17 +45,17 @@
                                                 :items="booker"
                                                 item-text="name"
                                                 item-value="id"
-                                                v-model="editedItem.book"
+                                                v-model="editedItem.books"
                                                 append-icon="mdi-book-open-page-variant"
                                                 label="Nome do livro"
                                                 :rules="[rules.required]"
                                                 ></v-select>
 
                                                 <v-select
-                                                :items="useres"
+                                                :items="users"
                                                 item-text="name"
                                                 item-value="id"
-                                                v-model="editedItem.user"
+                                                v-model="editedItem.users"
                                                 append-icon="mdi-account"
                                                 label="Nome do usuário"
                                                 :rules="[rules.required]"
@@ -140,16 +140,73 @@
           </v-toolbar>
         </template>
 
-        <template v-slot:[`item.actions`]="{ item }">
-          <v-icon size="22" color="blue" small class="mr-2" @click="editItem(item)">
-            mdi-pencil
-          </v-icon>
-          <v-icon color="red" small @click="deleteItem(item)">
-            mdi-delete
-          </v-icon>
-        </template>
-        <template v-slot:no-data>
-        </template>
+        <template v-slot:[`item.return_date`]="{ item }">
+        <v-chip (item.return_date) dark>
+          {{ item.renturn_date }}
+        </v-chip>
+      </template>
+
+      <template v-slot:[`item.actions`]="{ item }">
+        <v-tooltip
+          :disabled="item.renturn_date !== 'Não devolvido'"
+          top
+          color="c800"
+        >
+
+        <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              outlined
+              color="c800"
+              class="tableBtn blueBtn rounded-md px-0 mr-2"
+              min-width="30"
+              height="30"
+              v-bind="attrs"
+              v-on="on"
+              @click="editItem(item, item.renturn_date !== 'Não devolvido')"
+            >
+
+            <PhNotePencil size="25" weight="bold" />
+            </v-btn>
+          </template>
+          <span>Editar</span>
+        </v-tooltip>
+        <v-tooltip v-if="item.return_date === 'Não devolvido'" top color="c700">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              outlined
+              color="c700"
+              class="tableBtn orangeBtn rounded-md px-0"
+              min-width="30"
+              height="30"
+              v-bind="attrs"
+              v-on="on"
+              @click="returnItem(item)"
+            >
+
+            <PhBookmarksSimple size="25" weight="bold" />
+            </v-btn>
+          </template>
+          <span>Devolver</span>
+        </v-tooltip>
+        <v-tooltip v-else top color="c900">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              outlined
+              color="c900"
+              class="tableBtn redBtn rounded-md px-0"
+              min-width="30"
+              height="30"
+              v-bind="attrs"
+              v-on="on"
+              @click="deleteItem(item)"
+            >
+
+            <PhTrash size="25" weight="bold" />
+            </v-btn>
+          </template>
+          <span>Deletar</span>
+            </v-tooltip>
+            </template>
       </v-data-table>
       </v-col>
       </v-row>
@@ -160,9 +217,9 @@
     </template>
 
   <script>
-import books from '@/service/books'
+import booksService from '@/service/booksService'
 import rent from '@/service/rent'
-import users from '@/service/users'
+import usersService from '@/service/usersService'
 import moment from 'moment'
     export default {
     data: () => ({
@@ -174,8 +231,8 @@ import moment from 'moment'
       valid: true,
       headers: [
         { text: 'Id', align: 'start', value: 'id'},
-        { text: 'Livro', value: 'book.name' },
-        { text: 'Usuário', value: 'user.name' },
+        { text: 'Livro', value: 'books.name' },
+        { text: 'Usuário', value: 'users.name' },
         {
         text: 'Aluguel',
         value: 'rental_date',
@@ -198,13 +255,13 @@ import moment from 'moment'
     ],
       rents: [],
       booker: [],
-      useres: [],
+      users: [],
       search: '',
       editedIndex: -1,
       editedItem: {
         id: 0,
-        user: null,
-        book: null,
+        users: null,
+        books: null,
         rental_date: '',
         forecast_return: '',
         return_date: '',
@@ -213,8 +270,8 @@ import moment from 'moment'
       },
       defaultItem: {
         id: 0,
-        user: null,
-        book: null,
+        users: null,
+        books: null,
         rental_date: '',
         forecast_return: '',
         return_date: '',
@@ -261,12 +318,12 @@ import moment from 'moment'
           item.return_date = this.formatReturnDate(item.return_date)
           console.log(res.data.content)
         })
-        books.getAll().then((res) => {
+        booksService.getAll().then((res) => {
           this.booker = res.data.content;
           console.log(res.data.content)
         })
-        users.getAll().then((res) => {
-            this.useres = res;
+        usersService.getAll().then((res) => {
+            this.users = res.data.content;
             console.log(res.data.content)
         })
         this.isLoading = false;
@@ -375,9 +432,8 @@ import moment from 'moment'
   
         save() {
     if (!this.$refs.form.validate()) return;
-      this.editedItem.bookId = this.editedItem.book.id ?? this.editedItem.book;
-      this.editedItem.userId =
-        this.editedItem.user.id ?? this.editedItem.user;
+      this.editedItem.bookId = this.editedItem.books.id ?? this.editedItem.books;
+      this.editedItem.userId = this.editedItem.users.id ?? this.editedItem.users;
       if (this.editedIndex > -1) {
         this.update();
       } else {
@@ -467,7 +523,7 @@ import moment from 'moment'
     async delete() {
       await rent
         .delete(this.editedIndex)
-        .then(() => this.fetchApi())
+        .then(() => this.initialize())
         .then(() => {
           this.$swal({
             title: 'Sucesso',

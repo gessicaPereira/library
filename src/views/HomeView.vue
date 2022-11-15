@@ -1,228 +1,88 @@
 <template>
-  <v-container id="dashPage">
+  <v-container id="dashUser">
       <v-row>
-          <v-col>
-              <v-card rounded="xl" elevation="7" id="book">
-                  <v-card-title
-                      >Livros
-                      <v-spacer></v-spacer>
-                      <v-btn rounded to="/books" dark>
-                          <v-icon>fa-solid fa-book</v-icon>
-                      </v-btn>
-                  </v-card-title>
-
-                  <v-card-text class="font-weight-black">
-                        <v-chip>
-                            {{ book.length }}
-                        </v-chip>
-                    </v-card-text>
-                </v-card>
-            </v-col>
-            <v-col>
-
-              <v-card rounded="xl" elevation="7" id="publishing">
-                    <v-card-title
-                        >Editoras
-                        <v-spacer></v-spacer>
-                        <v-btn rounded to="/publishing" dark>
-                            <v-icon>fa-solid fa-feather</v-icon>
-                        </v-btn>
-                    </v-card-title>
-                    <v-card-text class="font-weight-black">
-                        <v-chip>
-                            {{ publishings.length }}
-                        </v-chip>
-                    </v-card-text>
-                </v-card>
-            </v-col>
-            <v-col>
-
-            <v-card rounded="xl" elevation="7" id="user">
-                    <v-card-title
-                        >Leitores
-                        <v-spacer></v-spacer>
-                        <v-btn rounded to="/users" dark>
-                            <v-icon>fa-solid fa-user</v-icon>
-                        </v-btn>
-                    </v-card-title>
-                    <v-card-text class="font-weight-black">
-                        <v-chip>
-                            {{ user.length }}
-                        </v-chip>
-                    </v-card-text>
-                </v-card>
-            </v-col>
-            <v-col>
-
-              <v-card rounded="xl" elevation="7" id="rent">
-                    <v-card-title
-                        >Aluguéis
-                        <v-spacer></v-spacer>
-                        <v-btn rounded to="/rents" dark>
-                            <v-icon>fa-solid fa-bookmark</v-icon>
-                        </v-btn>
-                    </v-card-title>
-                    <v-card-text class="font-weight-black">
-                        <v-chip>
-                            {{ rents.length }}
-                        </v-chip>
-                    </v-card-text>
-                </v-card>
-            </v-col>
-        </v-row>
-        <v-row>
-
-          <v-col>
-                <v-card rounded="xl" elevation="7" id="mostRent">
-                    <v-card-title>Os Livros Mais Alugados</v-card-title>
-                    <v-card-text>
-                        <Doughnut
-                            :chart-options="chartOptions"
-                            :chart-data="chartData"
-                            :chart-id="chartId"
-                            :dataset-id-key="datasetIdKey"
-                            :width="width"
-                            :height="height"
-                        />
-                    </v-card-text>
-                </v-card>
-            </v-col>
-            <v-col>
-              <v-card rounded="xl" elevation="7" height="380" dark id="info">
-                    <v-card-title
-                        >Último livro alugado
-                        <v-spacer></v-spacer>
-                        <v-icon size="50">fa-solid fa-book</v-icon>
-                    </v-card-title>
-                    <v-card-text class="font-weight-black">
-                        <v-row>
-                            <v-col>Nome do livro: {{ rents[0].book.name }}</v-col>
-                        </v-row>
-                        <v-row>
-                            <v-col>Nome do leitor: {{ rents[0].user.name }}</v-col>
-                        </v-row>
-                        <v-row>
-                            <v-col>Data em que alugou: {{ rental_date }}</v-col>
-                        </v-row>
-                        <v-row>
-                            <v-col>Data de previsão de entrega: {{ forecast_return }}</v-col>
-                        </v-row>
-                    </v-card-text>
-                </v-card>
-            </v-col>
-        </v-row>
-    </v-container>
+          <v-card  color="white"  rounded="xl">
+              <v-row>
+                  <v-col>
+                      <v-list-item three-line>
+                          <v-list-item-content>
+                              <div class="mb-4">
+                                  <v-btn fab color="white" elevation="0" to="/users">
+                                      <v-icon color="black">mdi-account</v-icon>
+                                  </v-btn>
+                              </div>
+                              <v-list-item-subtitle class="font-weight-bold black--text"> Quantidade de Usuários
+                              </v-list-item-subtitle>
+                              <v-list-item-title class="headline mb-1 black--text">
+                                  {{ quantUser }}
+                              </v-list-item-title>
+                          </v-list-item-content>
+                      </v-list-item>
+                  </v-col>
+              </v-row>
+          </v-card>
+      </v-row>
+  </v-container>
 </template>
 
+<template>
+  <v-container id="dashUser">
+      <v-row>
+          <v-card  color="white"  rounded="xl">
+              <v-row>
+                  <v-col>
+                      <v-list-item three-line>
+                          <v-list-item-content>
+                              <div class="mb-4">
+                                  <v-btn fab color="white" elevation="0" to="/users">
+                                      <v-icon color="black">mdi-account</v-icon>
+                                  </v-btn>
+                              </div>
+                              <v-list-item-subtitle class="font-weight-bold black--text"> Quantidade de Usuários
+                              </v-list-item-subtitle>
+                              <v-list-item-title class="headline mb-1 black--text">
+                                  {{ quantBook }}
+                              </v-list-item-title>
+                          </v-list-item-content>
+                      </v-list-item>
+                  </v-col>
+              </v-row>
+          </v-card>
+      </v-row>
+  </v-container>
+</template>
 <script>
-import books from '@/service/books';
-import publishing from '@/service/publishing';
-import rent from '@/service/rent';
-import users from '@/service/users';
-import moment from 'moment';
-import { Doughnut } from 'vue-chartjs/legacy';
-import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, CategoryScale } from 'chart.js';
+import users from '@/service/usersService';
+import books from '@/service/booksService';
 
-ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale);
-
-export default{
-  name: 'DoughnutChart',
-    components: { Doughnut },
-    props: {
-        chartId: {
-            type: String,
-            default: 'doughnut-chart'
-        },
-        datasetIdKey: {
-            type: String,
-            default: 'label'
-        },
-        width: {
-            type: Number,
-            default: 300
-        },
-        height: {
-            type: Number,
-            default: 300
-        }
-    },
-
-    data: () => ({
-        book: [],
-        user: [],
-        publishings: [],
-        rents: [],
-
-        firstRented: [],
-        secondRented: [],
-        thirtRented: [],
-        rental_date: '',
-        forecast_return: '',
-
-        chartData: {
-            labels: [],
-            datasets: [
-                {
-                    backgroundColor: ['#FF0000', '#FFFF00', '#FF4500'],
-                    data: []
-                }
-            ]
-        },
-        chartOptions: {
-            responsive: true,
-            maintainAspectRatio: false
-        }
-    }),
-
-    methods: {
-        async updateDash() {
-            await books.getAll()
-                .then((response) => {
-                    this.book = response.data.content;
-                    console.log(this.book);
-                    this.firstRented = this.book.at(-1);
-                    this.secondRented = this.book.at(-2);
-                    this.thirtRented = this.book.at(-3);
-                    this.getFirstRent();
-                    this.getSecondRent();
-                    this.getThirtRent();
-                })
-                .then(() => {
-                    this.updateGraphic();
-                }),
-                publishing.getAll().then((response) => {
-                    this.publishings = response.data.content;
-                }),
-                rent.getAll().then((response) => {
-                    this.rents = response.data.content;
-                    this.rental_date = moment(this.rents[0].rental_date).subtract(1, 'months').format('DD/MM/YYYY');
-                    this.forecast_return = moment(this.rents[0].forecast_return).subtract(1, 'months').format('DD/MM/YYYY');
-                }),
-                users.getAll().then((response) => {
-                    this.user = response.data.content;
-                });
-        },
+export default {
+  data: () => ({
+      user: [],
+      quantUser: [],
+      book: [],
+      quantBook: [],
+  }),
+  methods: {
+      list() {
+          users.getAll().then((resposta) => {
+              this.user = resposta.data;
+              this.quantUser = this.user.length;
+          });
       },
-      updateGraphic() {
-            this.book.sort((a, b) => a.quantityRented - b.quantityRented);
-        },
-        getFirstRent() {
-            this.chartData.labels.unshift(this.firstRented.name);
-            this.chartData.datasets[0].data.push(this.firstRented.quantityRented);
-        },
-        getSecondRent() {
-            this.chartData.labels.unshift(this.secondRented.name);
-            this.chartData.datasets[0].data.push(this.secondRented.quantityRented);
-        },
-        getThirtRent() {
-            this.chartData.labels.push(this.thirtRented.name);
-            this.chartData.datasets[0].data.push(this.thirtRented.quantityRented);
-        },
+      listUser(){
+        books.getAll().then((resposta) => {
+              this.user = resposta.data;
+              this.quantBook = this.book.length;
+      })
+  },
 
-    mounted() {
-        this.updateDash();
-    }
-};
-
+  mounted() {
+      this.list();
+  },
+  }}
 </script>
-            
+<style>
+#dashUser{
+  margin-top: -200px;
+}
+</style>

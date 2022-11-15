@@ -119,7 +119,7 @@
   </template>
  
 <script>
-import users from '@/service/users'
+import usersService from '@/service/usersService'
   export default {
   data: () => ({
     dialog: false,
@@ -192,7 +192,7 @@ import users from '@/service/users'
     },
 
     listUser() {
-            users.getAll().then(resposta => {
+            usersService.getAll().then(resposta => {
                 console.log(resposta.data)
                 this.isLoading = false;
                 this.user = resposta.data;             
@@ -254,7 +254,7 @@ import users from '@/service/users'
     },
 
     async createUser() {
-      await users.post(this.editedItem).then(() => this.listUser()).then(() => this.showAlertSuccessPost()).then(() => this.close())
+      await usersService.post(this.editedItem).then(() => this.listUser()).then(() => this.showAlertSuccessPost()).then(() => this.close())
         .catch((e) => {
           this.showAlertErrorPost()
           console.log(e)
@@ -262,7 +262,7 @@ import users from '@/service/users'
     },
   
     async atualizationUser() {
-      await users.put(this.editedIndex, this.editedItem).then(() => this.listUser()).then(() => this.showAlertSuccessUpdate()).then(() => this.close())
+      await usersService.put(this.editedIndex, this.editedItem).then(() => this.listUser()).then(() => this.showAlertSuccessUpdate()).then(() => this.close())
         .catch((e) => {
           this.showAlertErrorUpdate()
           console.log(e)
@@ -270,7 +270,7 @@ import users from '@/service/users'
     },
 
     async deleteUser() {
-      await users.delete(this.editedIndex).then(() => this.listUser()).then(() => this.showAlertSuccessDelete())
+      await usersService.delete(this.editedIndex).then(() => this.listUser()).then(() => this.showAlertSuccessDelete())
         .catch((e) => {
           this.showAlertErrorDelete()
           console.log(e)

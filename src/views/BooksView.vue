@@ -141,7 +141,7 @@
     </template>
    
   <script>
-import books from '@/service/books'
+import booksService from '@/service/booksService'
 import publishing from '@/service/publishing'
 import moment from 'moment'
 
@@ -222,7 +222,7 @@ import moment from 'moment'
       
   methods: {
     async initialize() {
-      await books.getAll().then((res) => {
+      await booksService.getAll().then((res) => {
         this.book = res.data.content;
         this.book.forEach((item) => {
           item.launch = this.parseDate(item.launch);
@@ -313,7 +313,7 @@ import moment from 'moment'
     },
   
       async createBook() {
-        await books.post(this.editedItem).then(() => this.initialize()).then(() => this.showAlertSuccessPost()).then(() => this.close())
+        await booksService.post(this.editedItem).then(() => this.initialize()).then(() => this.showAlertSuccessPost()).then(() => this.close())
           .catch((e) => {
             this.showAlertErrorPost()
             console.log(e)
@@ -321,7 +321,7 @@ import moment from 'moment'
       },
     
       async updateBook() {
-        await books.put(this.editedIndex, this.editedItem).then(() => this.initialize()).then(() => this.showAlertSuccessUpdate()).then(() => this.close())
+        await booksService.put(this.editedIndex, this.editedItem).then(() => this.initialize()).then(() => this.showAlertSuccessUpdate()).then(() => this.close())
           .catch((e) => {
             this.showAlertErrorUpdate()
             console.log(e)
@@ -329,7 +329,7 @@ import moment from 'moment'
       },
   
       async delete() {
-        await books.delete(this.editedIndex).then(() => this.initialize()).then(() => this.showAlertSuccessDelete())
+        await booksService.delete(this.editedIndex).then(() => this.initialize()).then(() => this.showAlertSuccessDelete())
           .catch((e) => {
             this.showAlertErrorDelete()
             console.log(e)
