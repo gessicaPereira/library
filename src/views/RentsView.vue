@@ -1,7 +1,7 @@
 <template>
     <div id="books">
     <v-app>
-    <v-main class="blue accent-2">
+    <v-main id="fundo">
       <v-container>
         <v-row>
           <v-col>
@@ -27,7 +27,7 @@
             >
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
-                  color="primary"
+                  id="btn"
                   dark
                   class="mb-2"
                   style="margin-top: 9px;"
@@ -113,6 +113,7 @@
                                         ></v-text-field>
                                     </template>
 
+
                                     <v-date-picker
                                     v-model="editedItem.forecast_return"
                                     @input="modal2 = false"
@@ -121,7 +122,11 @@
                                     scrollable
                                     :min="editedItem.rental_date"
                                 ></v-date-picker>
+
+
                                 </v-menu>
+
+                                
                                         </v-form>
                                         </v-container>
                                       </v-card-text>
@@ -141,14 +146,14 @@
         </template>
 
         <template v-slot:[`item.return_date`]="{ item }">
-        <v-chip (item.return_date) dark>
-          {{ item.renturn_date }}
+        <v-chip :color="getReturnedBookColor(item.return_date)" dark>
+          {{ item.return_date }}
         </v-chip>
       </template>
 
       <template v-slot:[`item.actions`]="{ item }">
         <v-tooltip
-          :disabled="item.renturn_date !== 'Não devolvido'"
+          :disabled="item.return_date !== 'Não devolvido'"
           top
           color="c800"
         >
@@ -157,25 +162,27 @@
             <v-btn
               outlined
               color="c800"
-              class="tableBtn blueBtn rounded-md px-0 mr-2"
+              class="mr-2"
               min-width="30"
               height="30"
               v-bind="attrs"
               v-on="on"
-              @click="editItem(item, item.renturn_date !== 'Não devolvido')"
+              @click="editItem(item, item.return_date !== 'Não devolvido')"
             >
+            
 
-            <PhNotePencil size="25" weight="bold" />
-            </v-btn>
+        </v-btn>
           </template>
           <span>Editar</span>
+          
         </v-tooltip>
+
         <v-tooltip v-if="item.return_date === 'Não devolvido'" top color="c700">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
               outlined
               color="c700"
-              class="tableBtn orangeBtn rounded-md px-0"
+              class="mr-2"
               min-width="30"
               height="30"
               v-bind="attrs"
@@ -183,17 +190,17 @@
               @click="returnItem(item)"
             >
 
-            <PhBookmarksSimple size="25" weight="bold" />
-            </v-btn>
+        </v-btn>
           </template>
           <span>Devolver</span>
         </v-tooltip>
+
         <v-tooltip v-else top color="c900">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
               outlined
               color="c900"
-              class="tableBtn redBtn rounded-md px-0"
+              class="mr-2"
               min-width="30"
               height="30"
               v-bind="attrs"
@@ -201,12 +208,25 @@
               @click="deleteItem(item)"
             >
 
-            <PhTrash size="25" weight="bold" />
-            </v-btn>
+        </v-btn>
           </template>
           <span>Deletar</span>
-            </v-tooltip>
-            </template>
+        </v-tooltip>
+      </template>
+
+      
+      <!--
+        <template v-slot:[`item.actions`]="{ item }">
+          <v-icon size="22" color="blue" small class="mr-2" @click="editItem(item)">
+            mdi-pencil
+          </v-icon>
+          <v-icon color="red" small @click="deleteItem(item)">
+            mdi-delete
+          </v-icon>
+        </template>
+        <template v-slot:no-data>
+        </template>-->
+        
       </v-data-table>
       </v-col>
       </v-row>
@@ -329,6 +349,12 @@ import moment from 'moment'
         this.isLoading = false;
     })
     },
+
+    getReturnedBookColor(item) {
+      if (item === 'Não devolvido') return 'c700';
+      else return 'blue';
+    },
+
     parseDate(date) {
       return moment(date).format('DD-MM-yyyy');
     },
@@ -377,7 +403,7 @@ import moment from 'moment'
           this.returnBook();
         } else if (result.isDenied) {
           this.$swal({
-            title: 'Retorno interrompido!',
+            title: 'Ação cancelada!',
             icon: 'info',
             allowOutsideClick: false,
           });
@@ -401,7 +427,7 @@ import moment from 'moment'
           this.delete();
         } else if (result.isDenied) {
           this.$swal({
-            title: 'Deleção interrompida!',
+            title: 'Ação cancelada!',
             icon: 'info',
             allowOutsideClick: false,
           });
@@ -430,7 +456,7 @@ import moment from 'moment'
           })
         },
   
-        save() {
+    save() {
     if (!this.$refs.form.validate()) return;
       this.editedItem.bookId = this.editedItem.books.id ?? this.editedItem.books;
       this.editedItem.userId = this.editedItem.users.id ?? this.editedItem.users;
@@ -443,121 +469,56 @@ import moment from 'moment'
     },
   
     async insert() {
-      await rent
-        .post(this.editedItem)
-        .then(() => this.initialize())
-        .then(() => {
-          this.$swal({
-            title: 'Sucesso',
-            text: 'Aluguel cadastrado!',
-            icon: 'success',
-            allowOutsideClick: false,
-          }).then(() => {
-            window.Toast.fire('Aluguel cadastrado', '', 'success');
+      await rent.post(this.editedItem)
+        .then(() => this.initialize()).then(() => 
+          this.showAlertSuccessPost()).then(() => this.close())
+          .catch(() => {
+            this.showAlertErrorPost()
           });
-        })
-        .catch((e) => {
-          this.$swal({
-            title: 'Opss...',
-            text: e.response.data.message,
-            icon: 'info',
-            allowOutsideClick: false,
-          }).then(() => {
-            if (e.response.data.code === 401) {
-              this.$router.push('login');
-            }
-            window.Toast.fire('Erro ao cadastrar aluguel', '', 'error');
-          });
-        });
     },
+
     async update() {
-      await rent
-        .put(this.editedIndex, this.editedItem)
-        .then(() => this.initialize())
-        .then(() => {
-          this.$swal({
-            title: 'Sucesso',
-            text: 'Livro alterado!',
-            icon: 'success',
-            allowOutsideClick: false,
-          }).then(() => {
-            window.Toast.fire('Livro alterado', '', 'success');
+      await rent.put(this.editedIndex, this.editedItem)
+        .then(() => this.initialize()).then(() => 
+          this.showAlertSuccessUpdate()).then(() => this.close())
+          .catch(() => {
+            this.showAlertErrorUpdate()
           });
-        })
-        .catch((e) => {
-          this.$swal({
-            title: 'Opss...',
-            text: e.response.data.message,
-            icon: 'info',
-            allowOutsideClick: false,
-          }).then(() => {
-            if (e.response.data.code === 401) {
-              this.$router.push('login');
-            }
-            window.Toast.fire('Erro ao alterar livro', '', 'error');
-          });
-        });
+
     },
     async returnBook() {
       await rent
         .devolution(this.editedIndex)
         .then(() => this.initialize())
-        .then(() => {
-          this.$swal({
-            title: 'Sucesso',
-            text: 'Livro devolvido!',
-            icon: 'success',
-            allowOutsideClick: false,
-          }).then(() => {
-            window.Toast.fire('Livro devolvido', '', 'info');
+        .then(() => 
+          this.showAlertSuccessReturn()).then(() => this.close())
+          .catch(() => {
+            this.showAlertErrorReturn()
           });
-        })
-        .catch((e) => {
-          if (e.response.data.code === 401) {
-            this.$router.push('login');
-          }
-          window.Toast.fire('Erro ao devolver livro', '', 'error');
-        });
     },
     
     async delete() {
       await rent
         .delete(this.editedIndex)
         .then(() => this.initialize())
-        .then(() => {
-          this.$swal({
-            title: 'Sucesso',
-            text: 'Aluguel deletado!',
-            icon: 'success',
-            allowOutsideClick: false,
-          }).then(() => {
-            window.Toast.fire('Aluguel deletado', '', 'info');
+        .then(() => 
+          this.showAlertSuccessDelete()).then(() => this.close())
+          .catch(() => {
+            this.showAlertErrorDelete()
           });
-        })
-        .catch((e) => {
-          this.$swal({
-            title: 'Opss...',
-            text: e.response.data.message,
-            icon: 'info',
-            allowOutsideClick: false,
-          }).then(() => {
-            if (e.response.data.code === 401) {
-              this.$router.push('login');
-            }
-            window.Toast.fire('Erro ao deletar aluguel', '', 'error');
-          });
-        });
     },
-  },
-        showAlertSuccessPost() {
+
+      showAlertSuccessPost() {
         this.$swal("", "Livro cadastrado com sucesso!", "success");
       },
-  
       showAlertSuccessDelete() {
         this.$swal("", "Livro deletado com sucesso!", "success");
       },
       showAlertSuccessUpdate() {
         this.$swal("", "Livro atualizado com sucesso!", "success");
+      },
+      showAlertErrorUpdate () {
+        this.$swal("", "Não foi possivel atualizar!", "error")
       },
         showAlertErrorPost() {
         this.$swal("Não foi possível cadastrar", "Já existe uma editora com esse nome!", "error");
@@ -565,7 +526,14 @@ import moment from 'moment'
       showAlertErrorDelete() {
         this.$swal("Atenção", "Esse livro tem um ou mais aluguéis associados!", "error");
       },
-    }
+      showAlertSuccessReturn() {
+        this.$swal("Sucesso!", "Livro devolvido", "success");
+      },
+      showAlertErrorReturn() {
+        this.$swal("Erro!", "Não foi possivel devolver este livro", "error");
+      }
+    }}
+
   </script>
   <style>
   #app{

@@ -1,7 +1,7 @@
 <template>
     <div id="app">
     <v-app>
-    <v-main class="blue accent-2">
+    <v-main id="fundo">
       <v-container>
         <v-row>
           <v-col>
@@ -27,7 +27,7 @@
             >
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
-                  color="primary"
+                 id="btn"
                   dark
                   class="mb-2"
                   style="margin-top: 9px;"
@@ -84,7 +84,7 @@
           </v-toolbar>
         </template>
         <template v-slot:[`item.actions`]="{ item }">
-          <v-icon size="22" color="blue" small class="mr-2" @click="editItem(item)">
+          <v-icon size="22" id="btn2" small class="mr-2" @click="editItem(item)">
             mdi-pencil
           </v-icon>
           <v-icon color="red" small @click="deleteItem(item)">

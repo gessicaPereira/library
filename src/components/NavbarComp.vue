@@ -1,6 +1,6 @@
 <template>
     <v-app id="inspire">
-      <v-navigation-drawer v-model="drawer" app>
+      <v-navigation-drawer id="lateral" v-model="drawer" app>
 
         <v-btn block id="inicio"
           depressed tile class="block"
@@ -38,10 +38,12 @@
           Aluguéis
         </v-btn>
 
+        <span class="mdi mdi-account-circle-outline"></span>
         <v-btn block id="usuario"
           depressed tile class="block"
           
           to="/users"
+          
         >
           
           Usuários
@@ -50,12 +52,12 @@
       </v-navigation-drawer>
       
   
-      <v-app-bar app
-          color="deep-purple accent-4"
+      <v-app-bar id="barra" app
+          
           dark>
         <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
   
-        <v-toolbar-title>WDA BOOKSTORE</v-toolbar-title>
+        <v-toolbar-title>Livraria</v-toolbar-title>
       </v-app-bar>
 
       <v-main>
@@ -73,28 +75,35 @@
 
   <style>
   #inicio{
-    margin-top: 110px;
-    height: 50px;
+    margin-top: 150px;
+    height: 70px;
     color: blue;
   }
   #editora{
-    margin-top: 20px;
-    height: 50px;
+    
+    height: 70px;
+    width: 10px;
     color: blue;
   }
   #livros{
-    margin-top: 20px;
-    height: 50px;
+    
+    height: 70px;
     color: blue;
   }
   #aluguel{
-    margin-top: 20px;
-    height: 50px;
+    
+    height: 70px;
     color: blue;
   }
   #usuario{
-    margin-top: 20px;
-    height: 50px;
+    width: 60px;
+    height: 70px;
     color: blue;
+  }
+  #barra{
+    background-color: 	#6A5ACD;
+  }
+  #lateral{
+    background-color: #6A5ACD;
   }
 </style>
