@@ -44,7 +44,7 @@
                                                 <v-text-field
                                                     v-model="editedItem.name"
                                                     append-icon="mdi-account"
-                                                    label="Nome*"
+                                                    label="Nome"
                                                     :rules="[rules.required, rules.min_counter, rules.counter]" counter="80"
                                                      maxlength="80"
                                                 ></v-text-field>
@@ -52,7 +52,7 @@
                                                 <v-text-field
                                                     v-model="editedItem.address"
                                                     append-icon="mdi-map-marker"
-                                                    label="Endereço*"
+                                                    label="Endereço"
                                                     :rules="[rules.required, rules.min_counter, rules.counter]" counter="80"
                                                     maxlength="80"
                                                     
@@ -61,14 +61,14 @@
                                                 <v-text-field
                                                     v-model="editedItem.city"
                                                     append-icon="mdi-city"
-                                                    label="Cidade*"
+                                                    label="Cidade"
                                                     :rules="[rules.required, rules.min_counter, rules.counter]" counter="80"
                                                     maxlength="80"
                                                 ></v-text-field>
 
                                                 <v-text-field
                                                     v-model="editedItem.email"
-                                                    label="Email*"
+                                                    label="Email"
                                                     append-icon="mdi-email"
                                                     :rules="[rules.required, rules.email]">
                                                 ></v-text-field>
@@ -100,13 +100,23 @@
         </v-toolbar>
       </template>
       <template v-slot:[`item.actions`]="{ item }">
-        <v-icon size="22" id="btn2" small class="mr-2" @click="editItem(item)">
-          mdi-pencil
-        </v-icon>
-        <v-icon color="red" small @click="deleteItem(item)">
-          mdi-delete
-        </v-icon>
-      </template>
+                        <v-tooltip top color="#6A5ACD">
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-icon size="22" class="mr-2" color="#6A5ACD" @click="editItem(item)" v-bind="attrs" v-on="on">
+                                    mdi-pencil
+                                </v-icon>
+                            </template>
+                            <span>Alterar</span>
+                        </v-tooltip>
+                        <v-tooltip top color="red">
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-icon class="mr-2" color="red" @click="deleteItem(item)" v-bind="attrs" v-on="on">
+                                    mdi-delete
+                                </v-icon>
+                            </template>
+                            <span>Deletar</span>
+                        </v-tooltip>
+                </template>
       <template v-slot:no-data>
       </template>
     </v-data-table>

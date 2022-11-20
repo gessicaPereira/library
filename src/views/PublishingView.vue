@@ -70,27 +70,27 @@
                                       </v-card-actions>
                                   </v-card>
                               </v-dialog>
-            <v-dialog v-model="dialogDelete" max-width="500px">
-              <v-card>
-                <v-card-title class="text-h5">Deseja deletar esta editora?</v-card-title>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn color="blue darken-1" text @click="closeDelete">Cancelar</v-btn>
-                  <v-btn color="blue darken-1" text @click="deleteItemConfirm">Sim</v-btn>
-                  <v-spacer></v-spacer>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
+          
           </v-toolbar>
         </template>
         <template v-slot:[`item.actions`]="{ item }">
-          <v-icon size="22" id="btn2" small class="mr-2" @click="editItem(item)">
-            mdi-pencil
-          </v-icon>
-          <v-icon color="red" small @click="deleteItem(item)">
-            mdi-delete
-          </v-icon>
-        </template>
+                        <v-tooltip top color="#6A5ACD">
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-icon size="22" class="mr-2" color="#6A5ACD" @click="editItem(item)" v-bind="attrs" v-on="on">
+                                    mdi-pencil
+                                </v-icon>
+                            </template>
+                            <span>Alterar</span>
+                        </v-tooltip>
+                        <v-tooltip top color="red">
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-icon class="mr-2" color="red" @click="deleteItem(item)" v-bind="attrs" v-on="on">
+                                    mdi-delete
+                                </v-icon>
+                            </template>
+                            <span>Deletar</span>
+                        </v-tooltip>
+                </template>
         <template v-slot:no-data>
         </template>
       </v-data-table>
@@ -189,12 +189,34 @@
           this.editedIndex = item.id
           this.editedItem = Object.assign({}, item)
           this.dialogDelete = true
+          this.deleteItemConfirm()
         },
   
         deleteItemConfirm () {
-          this.deletePublishing()
-          this.closeDelete()
-        },
+        this.$swal({
+        title: 'Você deseja deletar essa editora?',
+        icon: 'warning',
+        showDenyButton: true,
+        confirmButtonText: 'Deletar',
+        denyButtonText: 'Cancelar',
+        allowOutsideClick: false,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.deletePublishing();
+        } else if (result.isDenied) {
+          this.$swal({
+            title: 'Ação cancelada!',
+            icon: 'info',
+            allowOutsideClick: false,
+          });
+        }
+        this.$nextTick(() => {
+          this.editedItem = Object.assign({}, this.defaultItem);
+          this.editedIndex = -1;
+          this.$refs.form.resetValidation();
+        });
+      });
+    },
   
         close () {
           this.dialog = false

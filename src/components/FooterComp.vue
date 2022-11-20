@@ -4,7 +4,7 @@
         class="text-center"
         cols="12"
       >
-      <strong>WDA  Bokstore</strong> - {{ new Date().getFullYear() }} 
+      <strong>WDA  Livraria</strong> - {{ new Date().getFullYear() }} 
       </v-col>
     </v-footer>
   </template>
@@ -18,7 +18,7 @@
 .text-center{
     padding: 40px;
     text-align: center;
-    color:blue;
+    color: #6A5ACD;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 </style>

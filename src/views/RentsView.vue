@@ -9,7 +9,7 @@
         class="elevation-1"
         :headers="headers" 
         :search="search" 
-        :items="rents"> 
+        :items="rental"> 
         <template v-slot:top>
           <v-toolbar flat>
             <v-toolbar-title>Aluguéis</v-toolbar-title>
@@ -40,8 +40,8 @@
               <v-card>
               <v-card-text>
                                           <v-container>
-                                              <v-form ref="form" v-model="valid" lazy-validation>
-                                                <v-select
+                    <v-form ref="form" v-model="valid" lazy-validation>
+                                               <v-select
                                                 :items="booker"
                                                 item-text="name"
                                                 item-value="id"
@@ -122,12 +122,9 @@
                                     scrollable
                                     :min="editedItem.rental_date"
                                 ></v-date-picker>
-
-
-                                </v-menu>
-
+                            </v-menu>
+                                </v-form>   
                                 
-                                        </v-form>
                                         </v-container>
                                       </v-card-text>
                                       <v-card-actions>
@@ -141,92 +138,70 @@
                                       </v-card-actions>
                                   </v-card>
                               </v-dialog>
-
           </v-toolbar>
-        </template>
+          </template>
 
-        <template v-slot:[`item.return_date`]="{ item }">
-        <v-chip :color="getReturnedBookColor(item.return_date)" dark>
-          {{ item.return_date }}
-        </v-chip>
+        <v-dialog v-model="dialogDelete" max-width="500px">
+            <v-card>
+                <v-card-title class="text-h7">
+                            <v-icon>mdi-alertcircle</v-icon>Você tem certeza que deseja deletar?
+                          </v-card-title>
+                          <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn color="red darken-1" text @click="closeDelete">Cancelar</v-btn>
+                            <v-btn color="blue darken-1" text @click="deleteItemConfirm">Confirmar</v-btn>
+                            <v-spacer></v-spacer>
+                          </v-card-actions>
+            </v-card>
+        </v-dialog>
+
+        <v-dialog v-model="dialog2" max-width="370px" persistent content-class="round">
+                        <v-card>
+                          <v-card-title class="headline">
+                            <v-spacer></v-spacer> <span class="mt-2 mb-4">Devolver livro</span>
+                            <v-spacer></v-spacer>
+                          </v-card-title>
+                          <v-card-actions>
+                            <v-spacer></v-spacer>
+
+                            <v-btn color="red darken-1" class="mb-2" text @click="close">
+                              Cancelar
+                            </v-btn>
+                            <v-btn color="blue darken-1" class="mb-2" text @click="save">
+                              Ok
+                            </v-btn>
+                            <v-spacer></v-spacer>
+                          </v-card-actions>
+                        </v-card>
+                      </v-dialog>
+
+<template v-slot:[`item.status`]="{ item }">
+    <v-chip class="elevation-3" :color="getColor(item)" dark>
+      {{ item.status }}
+    </v-chip>
+  </template>
+
+<template v-slot:[`item.actions`]="{ item }">
+    <v-tooltip top color="red" v-if="item.return_date !== 'Em espera'">
+      <template v-slot:activator="{ on, attrs }">
+        <v-icon  size="20" color="red" v-bind="attrs" v-on="on" @click="deleteItem(item)">
+          mdi-delete
+        </v-icon>
       </template>
+      <span>Excluir</span>
+    </v-tooltip>
 
-      <template v-slot:[`item.actions`]="{ item }">
-        <v-tooltip
-          :disabled="item.return_date !== 'Não devolvido'"
-          top
-          color="c800"
-        >
+                <v-tooltip top color="blue" v-else>
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-icon v size="22" class="mr-5" color="green accent-3" v-bind="attrs" v-on="on"
+                          @click="returnItemConfirm(item)">
+                          mdi-check-bold
+                        </v-icon>
+                      </template>
+                      <span>Devolver</span>
+                </v-tooltip>
+                  </template>
 
-        <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              outlined
-              color="c800"
-              class="mr-2"
-              min-width="30"
-              height="30"
-              v-bind="attrs"
-              v-on="on"
-              @click="editItem(item, item.return_date !== 'Não devolvido')"
-            >
-            
-
-        </v-btn>
-          </template>
-          <span>Editar</span>
-          
-        </v-tooltip>
-
-        <v-tooltip v-if="item.return_date === 'Não devolvido'" top color="c700">
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              outlined
-              color="c700"
-              class="mr-2"
-              min-width="30"
-              height="30"
-              v-bind="attrs"
-              v-on="on"
-              @click="returnItem(item)"
-            >
-
-        </v-btn>
-          </template>
-          <span>Devolver</span>
-        </v-tooltip>
-
-        <v-tooltip v-else top color="c900">
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              outlined
-              color="c900"
-              class="mr-2"
-              min-width="30"
-              height="30"
-              v-bind="attrs"
-              v-on="on"
-              @click="deleteItem(item)"
-            >
-
-        </v-btn>
-          </template>
-          <span>Deletar</span>
-        </v-tooltip>
-      </template>
-
-      
-      <!--
-        <template v-slot:[`item.actions`]="{ item }">
-          <v-icon size="22" color="blue" small class="mr-2" @click="editItem(item)">
-            mdi-pencil
-          </v-icon>
-          <v-icon color="red" small @click="deleteItem(item)">
-            mdi-delete
-          </v-icon>
-        </template>
-        <template v-slot:no-data>
-        </template>-->
-        
       </v-data-table>
       </v-col>
       </v-row>
@@ -236,7 +211,7 @@
     </div>
     </template>
 
-  <script>
+<script>
 import booksService from '@/service/booksService'
 import rent from '@/service/rent'
 import usersService from '@/service/usersService'
@@ -244,6 +219,8 @@ import moment from 'moment'
     export default {
     data: () => ({
       dialog: false,
+      dialog2: false,
+      date: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
       dialogDelete: false,
       modal: false,
       modal2: false,
@@ -253,11 +230,7 @@ import moment from 'moment'
         { text: 'Id', align: 'start', value: 'id'},
         { text: 'Livro', value: 'books.name' },
         { text: 'Usuário', value: 'users.name' },
-        {
-        text: 'Aluguel',
-        value: 'rental_date',
-        sortable: false,
-        align: 'center',
+        {text: 'Aluguel', value: 'rental_date', sortable: false,align: 'center',
       },
       {
         text: 'Previsão',
@@ -271,9 +244,10 @@ import moment from 'moment'
         sortable: false,
         align: 'center',
       },
+      { text: 'Status', value: 'status' },
       { text: 'Ações', value: 'actions', sortable: false, align: 'center' },
     ],
-      rents: [],
+      rental: [],
       booker: [],
       users: [],
       search: '',
@@ -285,7 +259,7 @@ import moment from 'moment'
         rental_date: '',
         forecast_return: '',
         return_date: '',
-        userId: 0,
+        user: 0,
         bookId: 0,
       },
       defaultItem: {
@@ -295,7 +269,7 @@ import moment from 'moment'
         rental_date: '',
         forecast_return: '',
         return_date: '',
-        userId: 0,
+        user: 0,
         bookId: 0,
       },
       rules: {
@@ -331,11 +305,15 @@ import moment from 'moment'
   methods: {
     async initialize() {
       await rent.getAll().then((res) => {
-        this.rents = res.data.content;
-        this.rents.forEach((item) => {
+        this.rental = res.data.content;
+        this.rental.forEach((item) => {
           item.rental_date = this.parseDate(item.rental_date)
           item.forecast_return = this.parseDate(item.forecast_return)
           item.return_date = this.formatReturnDate(item.return_date)
+
+          if (item.return_date == null) {
+            return item.return_date = "Em espera"
+            }
           console.log(res.data.content)
         })
         booksService.getAll().then((res) => {
@@ -350,9 +328,10 @@ import moment from 'moment'
     })
     },
 
-    getReturnedBookColor(item) {
-      if (item === 'Não devolvido') return 'c700';
-      else return 'blue';
+    getColor(item) {
+      if (item.status === 'DEADLINE') return 'green'
+      else if (item.status === 'LATE') return 'red'
+      else if (item.status === 'PROGRESS') return 'blue'
     },
 
     parseDate(date) {
@@ -370,14 +349,15 @@ import moment from 'moment'
     },
   
         editItem (item, isDisaled) {
-            if(isDisaled) return;
+          if (isDisaled) return;
           this.editedIndex = item.id
           this.editedItem = Object.assign({}, item)
           this.editedItem.rental_date = this.parseDateISO(item.rental_date)
           this.editedItem.forecast_return = this.parseDateISO(item.forecast_return)
-          this.editedItem.return_date = ''
+          this.editedItem.return_date = this.date(item.return_date)
           this.dialog = true
         },
+
         returnItem(item) {
         this.editedIndex = item.id;
         this.returnItemConfirm();
@@ -400,7 +380,7 @@ import moment from 'moment'
         allowOutsideClick: false,
       }).then((result) => {
         if (result.isConfirmed) {
-          this.returnBook();
+            this.returnBook();
         } else if (result.isDenied) {
           this.$swal({
             title: 'Ação cancelada!',
@@ -459,9 +439,9 @@ import moment from 'moment'
     save() {
     if (!this.$refs.form.validate()) return;
       this.editedItem.bookId = this.editedItem.books.id ?? this.editedItem.books;
-      this.editedItem.userId = this.editedItem.users.id ?? this.editedItem.users;
+      this.editedItem.user = this.editedItem.users.id ?? this.editedItem.users;
       if (this.editedIndex > -1) {
-        this.update();
+        this.returnBook();
       } else {
         this.insert();
       }
@@ -477,24 +457,15 @@ import moment from 'moment'
           });
     },
 
-    async update() {
-      await rent.put(this.editedIndex, this.editedItem)
-        .then(() => this.initialize()).then(() => 
-          this.showAlertSuccessUpdate()).then(() => this.close())
-          .catch(() => {
-            this.showAlertErrorUpdate()
-          });
-
-    },
     async returnBook() {
-      await rent
-        .devolution(this.editedIndex)
+      await rent.devolution(this.editedIndex)
         .then(() => this.initialize())
         .then(() => 
           this.showAlertSuccessReturn()).then(() => this.close())
           .catch(() => {
             this.showAlertErrorReturn()
           });
+          
     },
     
     async delete() {
@@ -509,22 +480,16 @@ import moment from 'moment'
     },
 
       showAlertSuccessPost() {
-        this.$swal("", "Livro cadastrado com sucesso!", "success");
+        this.$swal("", "Aluguel cadastrado com sucesso!", "success");
       },
       showAlertSuccessDelete() {
-        this.$swal("", "Livro deletado com sucesso!", "success");
-      },
-      showAlertSuccessUpdate() {
-        this.$swal("", "Livro atualizado com sucesso!", "success");
-      },
-      showAlertErrorUpdate () {
-        this.$swal("", "Não foi possivel atualizar!", "error")
+        this.$swal("", "Aluguel deletado com sucesso!", "success");
       },
         showAlertErrorPost() {
-        this.$swal("Não foi possível cadastrar", "Já existe uma editora com esse nome!", "error");
+        this.$swal("Não foi possível cadastrar",  "error");
       }, 
       showAlertErrorDelete() {
-        this.$swal("Atenção", "Esse livro tem um ou mais aluguéis associados!", "error");
+        this.$swal("Atenção", "Não foi possivel deletar", "error");
       },
       showAlertSuccessReturn() {
         this.$swal("Sucesso!", "Livro devolvido", "success");

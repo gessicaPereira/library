@@ -10,9 +10,6 @@ export default{
     post: (rental) =>{
         return http.post('/rents', rental);
     },
-    put: (id, rental) =>{
-        return http.put(`/rents/${id}`, rental)
-    },
     devolution: (id) => {
         return http.put(`/rents/devolution/${id}`);
     },

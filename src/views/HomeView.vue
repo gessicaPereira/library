@@ -1,24 +1,22 @@
 <template>
-  <v-app>
-      <v-main class="blue accent-2">
-          <v-container>
-              <v-row>
-                  <v-col>
-                      <DashUser></DashUser>
-                      <DashRent></DashRent>
-                  </v-col>
-              </v-row>
-          </v-container>
-      </v-main>
-  </v-app>
+    <v-app>
+        <v-main id="fundo">
+            <v-container>
+                <v-row>
+                        <CardChart></CardChart>
+                        <CardTotals></CardTotals>  
+                </v-row>
+            </v-container>
+        </v-main>
+    </v-app>
 </template>
 
 <script>
-import DashUser from '@/components/DashUser.vue';
-import DashRent from '@/components/DashRent.vue';
+import CardChart from '@/components/CardChart.vue';
+import CardTotals from '@/components/CardTotals.vue';
 
 export default {
-  components: { DashUser, DashRent }
+    components: { CardChart, CardTotals }
 
 }
 

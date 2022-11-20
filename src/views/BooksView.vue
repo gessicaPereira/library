@@ -61,7 +61,7 @@
                                                         :rules="[rules.required, rules.minNumber]" label="Quantidade">
                                                     </v-text-field>
 
-                                                  <v-select v-model="editedItem.publishing" :items="publisher" item-text="name"
+                                                  <v-select :items="publisher" v-model="editedItem.publishing" item-text="name"
                                                     item-value="id" :rules="[rules.required]" label="Editora">
                                                   </v-select>
 
@@ -122,13 +122,23 @@
           </v-toolbar>
         </template>
         <template v-slot:[`item.actions`]="{ item }">
-          <v-icon size="22" id="btn2" small class="mr-2" @click="editItem(item)">
-            mdi-pencil
-          </v-icon>
-          <v-icon color="red" small @click="deleteItem(item)">
-            mdi-delete
-          </v-icon>
-        </template>
+                        <v-tooltip top color="#6A5ACD">
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-icon size="22" class="mr-2" color="#6A5ACD" @click="editItem(item)" v-bind="attrs" v-on="on">
+                                    mdi-pencil
+                                </v-icon>
+                            </template>
+                            <span>Alterar</span>
+                        </v-tooltip>
+                        <v-tooltip top color="red">
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-icon class="mr-2" color="red" @click="deleteItem(item)" v-bind="attrs" v-on="on">
+                                    mdi-delete
+                                </v-icon>
+                            </template>
+                            <span>Deletar</span>
+                        </v-tooltip>
+                </template>
         <template v-slot:no-data>
         </template>
       </v-data-table>
@@ -270,7 +280,7 @@ import moment from 'moment'
           this.delete();
         } else if (result.isDenied) {
           this.$swal({
-            title: 'Deleção interrompida!',
+            title: 'Ação cancelada!',
             icon: 'info',
             allowOutsideClick: false,
           });
