@@ -46,7 +46,7 @@
                                                 item-text="name"
                                                 item-value="id"
                                                 v-model="editedItem.books"
-                                                append-icon="mdi-book-open-page-variant"
+                                                append-icon="mdi-book"
                                                 label="Nome do livro"
                                                 :rules="[rules.required]"
                                                 ></v-select>
@@ -140,20 +140,6 @@
                               </v-dialog>
           </v-toolbar>
           </template>
-
-        <v-dialog v-model="dialogDelete" max-width="500px">
-            <v-card>
-                <v-card-title class="text-h7">
-                            <v-icon>mdi-alertcircle</v-icon>Você tem certeza que deseja deletar?
-                          </v-card-title>
-                          <v-card-actions>
-                            <v-spacer></v-spacer>
-                            <v-btn color="red darken-1" text @click="closeDelete">Cancelar</v-btn>
-                            <v-btn color="blue darken-1" text @click="deleteItemConfirm">Confirmar</v-btn>
-                            <v-spacer></v-spacer>
-                          </v-card-actions>
-            </v-card>
-        </v-dialog>
 
         <v-dialog v-model="dialog2" max-width="370px" persistent content-class="round">
                         <v-card>
@@ -255,7 +241,9 @@ import moment from 'moment'
       editedItem: {
         id: 0,
         users: null,
-        books: null,
+        books: {
+          quantity: '',
+        },
         rental_date: '',
         forecast_return: '',
         return_date: '',
@@ -329,9 +317,9 @@ import moment from 'moment'
     },
 
     getColor(item) {
-      if (item.status === 'DEADLINE') return 'green'
-      else if (item.status === 'LATE') return 'red'
-      else if (item.status === 'PROGRESS') return 'blue'
+      if (item.status === 'DEVOLVIDO') return 'green'
+      else if (item.status === 'ATRASADO') return 'red'
+      else if (item.status === 'PROGRESSO') return 'blue'
     },
 
     parseDate(date) {
@@ -449,8 +437,7 @@ import moment from 'moment'
   
     async create() {
       await rent.post(this.editedItem)
-        .then(() => this.initialize()).then(() => 
-          this.showAlertSuccessPost()).then(() => this.close())
+        .then(() => this.initialize()).then(() => this.showAlertSuccessPost()).then(() => this.close())
           .catch(() => {
             this.showAlertErrorPost()
           });
@@ -472,7 +459,7 @@ import moment from 'moment'
         .delete(this.editedIndex)
         .then(() => this.initialize())
         .then(() => 
-          this.showAlertSuccessDelete()).then(() => this.close())
+          this.showAlertSuccessDelete())
           .catch(() => {
             this.showAlertErrorDelete()
           });
@@ -485,7 +472,7 @@ import moment from 'moment'
         this.$swal("", "Aluguel deletado com sucesso!", "success");
       },
         showAlertErrorPost() {
-        this.$swal("Não foi possível cadastrar",  "ERROR");
+        this.$swal("Não foi possível cadastrar",  "Verifique se o aluguel já existe e o estoque do livro");
       }, 
       showAlertErrorDelete() {
         this.$swal("Atenção", "Não foi possivel deletar", "ERROR");

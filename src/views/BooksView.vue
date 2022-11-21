@@ -43,7 +43,7 @@
                                               <v-form ref="form" v-model="valid" lazy-validation>
                                                   <v-text-field
                                                       v-model="editedItem.name"
-                                                      append-icon="mdi-book-open-page-variant"
+                                                      append-icon="mdi-book"
                                                       :rules="[rules.required, rules.max, rules.min]"
                                                       :counter="80" 
                                                         label="Nome">
@@ -51,7 +51,7 @@
                                                   
                                                   <v-text-field
                                                       v-model="editedItem.author"
-                                                      append-icon="mdi-account-box-outline"
+                                                      append-icon="mdi-account"
                                                       :rules="[rules.required, rules.max, rules.min]"
                                                       :counter="80"
                                                       label="Autor"
@@ -61,7 +61,7 @@
                                                         :rules="[rules.required, rules.minNumber]" label="Quantidade">
                                                     </v-text-field>
 
-                                                  <v-select :items="publisher" v-model="editedItem.publishing" item-text="name"
+                                                  <v-select :items="publisher" v-model="editedItem.publishing" append-icon="mdi-book-marker" item-text="name"
                                                     item-value="id" :rules="[rules.required]" label="Editora">
                                                   </v-select>
 
@@ -85,8 +85,6 @@
                                                         :rules="[rules.required]"
                                                         ></v-text-field>
                                                     </template> 
-
-
                                                 
                                                     <v-date-picker
                                                         v-model="editedItem.launch"
@@ -96,13 +94,6 @@
                                                         :max="todayDate"
                                                     ></v-date-picker>
                                                     </v-menu>
-
-
-                                                    <template v-slot:[`item.rentedQuantity`]="{ item }">
-                                                        <v-chip color="c700" dark>
-                                                        {{ item.rentedQuantity }}
-                                                        </v-chip>
-                                                    </template>
 
                                         </v-form>
                                         </v-container>
@@ -285,7 +276,6 @@ import moment from 'moment'
         this.$nextTick(() => {
           this.editedItem = Object.assign({}, this.defaultItem);
           this.editedIndex = -1;
-          this.$refs.form.resetValidation();
         });
       });
     },

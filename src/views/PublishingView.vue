@@ -43,7 +43,7 @@
                                               <v-form ref="form" v-model="valid" lazy-validation>
                                                   <v-text-field
                                                       v-model="editedItem.name"
-                                                      append-icon="mdi-account"
+                                                      append-icon="mdi-book-marker"
                                                       :rules="[rules.required, rules.maxEditora, rules.min]"
                                                       :counter="80" 
                                                         label="Nome">
