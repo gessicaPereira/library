@@ -1,5 +1,5 @@
 <template>
-  <div id="user">
+  <div id="useres">
   <v-app>
   <v-main id="fundo">
     <v-container>
@@ -110,7 +110,7 @@
                         </v-tooltip>
                         <v-tooltip top color="red">
                             <template v-slot:activator="{ on, attrs }">
-                                <v-icon class="mr-2" color="red" @click="deleteItem(item)" v-bind="attrs" v-on="on">
+                                <v-icon class="mr-2" color="red" @click="deleteItemConfirm(item)" v-bind="attrs" v-on="on">
                                     mdi-delete
                                 </v-icon>
                             </template>
@@ -231,9 +231,30 @@ import usersService from '@/service/usersService'
       },
 
       deleteItemConfirm () {
-        this.deleteUser()
-        this.closeDelete()
-      },
+        this.$swal({
+        title: 'Você deseja deletar esse usuário?',
+        icon: 'warning',
+        showDenyButton: true,
+        confirmButtonText: 'Deletar',
+        denyButtonText: 'Cancelar',
+        allowOutsideClick: false,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.deleteUser();
+        } else if (result.isDenied) {
+          this.$swal({
+            title: 'Ação cancelada!',
+            icon: 'info',
+            allowOutsideClick: false,
+          });
+        }
+        this.$nextTick(() => {
+          this.editedItem = Object.assign({}, this.defaultItem);
+          this.editedIndex = -1;
+          this.$refs.form.resetValidation();
+        });
+      });
+    },
 
       close () {
         this.dialog = false
@@ -312,7 +333,7 @@ import usersService from '@/service/usersService'
 }
 </script>
 <style>
-#user{
+#useres{
   margin-top: -325x;
 }
 #fundo{

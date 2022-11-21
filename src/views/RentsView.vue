@@ -282,7 +282,7 @@ import moment from 'moment'
     }),
       computed: {
         formTitle () {
-          return this.editedIndex === -1 ? 'Nova aluguel' : 'Editar aluguel'
+          return this.editedIndex === -1 ? 'Nova aluguel' : 'Devolver'
         },
         computedTodayDate() {
         return moment(new Date()).format('yyyy-MM-DD');
@@ -348,8 +348,7 @@ import moment from 'moment'
       return dateToPrint + textToPrint
     },
   
-        editItem (item, isDisaled) {
-          if (isDisaled) return;
+        editItem (item) {
           this.editedIndex = item.id
           this.editedItem = Object.assign({}, item)
           this.editedItem.rental_date = this.parseDateISO(item.rental_date)
@@ -359,7 +358,7 @@ import moment from 'moment'
         },
 
         returnItem(item) {
-        this.editedIndex = item.id;
+        this.editedItem = Object.assign({}, item)
         this.returnItemConfirm();
         },
   
@@ -370,7 +369,7 @@ import moment from 'moment'
           this.deleteItemConfirm()
         },
         
-    returnItemConfirm() {
+    returnItemConfirm(item) {
       this.$swal({
         title: 'Você deseja devolver esse livro?',
         icon: 'question',
@@ -380,7 +379,7 @@ import moment from 'moment'
         allowOutsideClick: false,
       }).then((result) => {
         if (result.isConfirmed) {
-            this.returnBook();
+          this.returnRent(item.id);
         } else if (result.isDenied) {
           this.$swal({
             title: 'Ação cancelada!',
@@ -441,14 +440,14 @@ import moment from 'moment'
       this.editedItem.bookId = this.editedItem.books.id ?? this.editedItem.books;
       this.editedItem.user = this.editedItem.users.id ?? this.editedItem.users;
       if (this.editedIndex > -1) {
-        this.returnBook();
+        this.returnRent();
       } else {
-        this.insert();
+        this.create();
       }
       this.close();
     },
   
-    async insert() {
+    async create() {
       await rent.post(this.editedItem)
         .then(() => this.initialize()).then(() => 
           this.showAlertSuccessPost()).then(() => this.close())
@@ -457,8 +456,8 @@ import moment from 'moment'
           });
     },
 
-    async returnBook() {
-      await rent.devolution(this.editedIndex)
+    async returnRent(item) {
+      await rent.devolution(item)
         .then(() => this.initialize())
         .then(() => 
           this.showAlertSuccessReturn()).then(() => this.close())
@@ -486,16 +485,16 @@ import moment from 'moment'
         this.$swal("", "Aluguel deletado com sucesso!", "success");
       },
         showAlertErrorPost() {
-        this.$swal("Não foi possível cadastrar",  "error");
+        this.$swal("Não foi possível cadastrar",  "ERROR");
       }, 
       showAlertErrorDelete() {
-        this.$swal("Atenção", "Não foi possivel deletar", "error");
+        this.$swal("Atenção", "Não foi possivel deletar", "ERROR");
       },
       showAlertSuccessReturn() {
         this.$swal("Sucesso!", "Livro devolvido", "success");
       },
       showAlertErrorReturn() {
-        this.$swal("Erro!", "Não foi possivel devolver este livro", "error");
+        this.$swal("Erro!", "Não foi possivel devolver este livro", "ERROR");
       }
     }}
 

@@ -174,7 +174,6 @@ import moment from 'moment'
         align: 'center',
       },
       { text: 'Quantidade', value: 'quantity', align: 'center' },
-      { text: 'Alugados', value: 'rentedQuantity', align: 'center' },
       { text: 'Ações', value: 'actions', sortable: false, align: 'center' },
     ],
 
@@ -186,7 +185,6 @@ import moment from 'moment'
         id: 0,
         name: '',
         quantity: '',
-        rentedQuantity: 0,
         launch: '',
         author: '',
         publishing: null,
@@ -196,7 +194,6 @@ import moment from 'moment'
         id: 0,
         name: '',
         quantity: '',
-        rentedQuantity: 0,
         launch: '',
         author: '',
         publishing: null,
@@ -310,7 +307,7 @@ import moment from 'moment'
           })
         },
   
-        save() {
+      save() {
       if (!this.$refs.form.validate()) return;
       this.editedItem.publishingId =
         this.editedItem.publishing.id ?? this.editedItem.publishing;
