@@ -31,7 +31,7 @@ const routes = [
     component: RentsView,
   },
   {
-    path: '/home',
+    path: '/',
     name: 'home',
     component: HomeView,
   },
