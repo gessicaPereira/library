@@ -359,7 +359,7 @@ import moment from 'moment'
 
         returnItem(item) {
         this.editedItem = Object.assign({}, item)
-        this.returnItemConfirm();
+        this.returnItemConfirm(item);
         },
   
         deleteItem (item) {
