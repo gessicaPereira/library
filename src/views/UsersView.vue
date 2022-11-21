@@ -86,17 +86,7 @@
                                     </v-card-actions>
                                 </v-card>
                             </v-dialog>
-          <v-dialog v-model="dialogDelete" max-width="500px">
-            <v-card>
-              <v-card-title class="text-h5">Deseja deletar este usuário?</v-card-title>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" text @click="closeDelete">Cancelar</v-btn>
-                <v-btn color="blue darken-1" text @click="deleteItemConfirm">Sim</v-btn>
-                <v-spacer></v-spacer>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
+
         </v-toolbar>
       </template>
       <template v-slot:[`item.actions`]="{ item }">
@@ -230,7 +220,7 @@ import usersService from '@/service/usersService'
         this.dialogDelete = true
       },
 
-      deleteItemConfirm () {
+      deleteItemConfirm (item) {
         this.$swal({
         title: 'Você deseja deletar esse usuário?',
         icon: 'warning',
@@ -240,7 +230,7 @@ import usersService from '@/service/usersService'
         allowOutsideClick: false,
       }).then((result) => {
         if (result.isConfirmed) {
-          this.deleteUser();
+          this.deleteUser(item.id);
         } else if (result.isDenied) {
           this.$swal({
             title: 'Ação cancelada!',
@@ -250,8 +240,6 @@ import usersService from '@/service/usersService'
         }
         this.$nextTick(() => {
           this.editedItem = Object.assign({}, this.defaultItem);
-          this.editedIndex = -1;
-          this.$refs.form.resetValidation();
         });
       });
     },
@@ -300,8 +288,8 @@ import usersService from '@/service/usersService'
         })
     },
 
-    async deleteUser() {
-      await usersService.delete(this.editedIndex).then(() => this.listUser()).then(() => this.showAlertSuccessDelete())
+    async deleteUser(item) {
+      await usersService.delete(item).then(() => this.listUser()).then(() => this.showAlertSuccessDelete())
         .catch((e) => {
           this.showAlertErrorDelete()
           console.log(e)

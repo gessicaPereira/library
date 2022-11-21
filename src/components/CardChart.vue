@@ -17,7 +17,7 @@ export default {
                 chart: {
                     type: 'pie'
                 },
-                labels: ['Devolvido', 'Pendente', 'Devovlvido com atraso'],
+                labels: ['Devolvido', 'Devovlvido com atraso', 'Em progresso'],
                 title: {
                     text: 'Média de devoluções de livros'
                 },
