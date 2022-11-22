@@ -229,6 +229,7 @@ import moment from 'moment'
           this.publisher = res.data.content;
         });
         this.isLoading = false;
+        console.log(this.book)
       });
     },
 
@@ -246,6 +247,7 @@ import moment from 'moment'
           this.editedItem = Object.assign({}, item)
           this.editedItem.launch = this.parseDateISO(item.launch);
           this.dialog = true;
+          console.log(this.editedItem)
         },
   
         deleteItem (item) {
