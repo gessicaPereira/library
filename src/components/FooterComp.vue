@@ -18,7 +18,7 @@
 .text-center{
     padding: 40px;
     text-align: center;
-    color: #6A5ACD;
+    color: #b67dbe;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 </style>

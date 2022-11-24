@@ -1,6 +1,6 @@
 <template>
     <v-row>
-            <v-card id="cardEdit" elevation="12" color="deep-purple" dark>
+            <v-card id="cardEdit" elevation="12" color="#b67dbe" dark>
                 <v-card-title>
                     <v-icon size="25" class="mr-1">mdi-bookshelf</v-icon>
                     Total de Editoras
@@ -10,8 +10,8 @@
                     <p class="text-h6" dark>↪ {{ publishings }}</p>
                 </v-card-text>
             </v-card>
-        
-            <v-card id="cardBook" elevation="12" color="deep-purple" dark>
+            
+            <v-card id="cardBook" elevation="12" color="#b67dbe " dark>
                 <v-card-title>
                     <v-icon size="25" class="mr-1">mdi-book-multiple</v-icon>
                     Total de Livros
@@ -23,7 +23,7 @@
             </v-card>
         
         
-            <v-card id="user" elevation="12" color="deep-purple" dark>
+            <v-card id="user" elevation="12" color="#b67dbe" dark>
                 <v-card-title>
                     <v-icon size="25" class="mr-1">mdi-account-multiple</v-icon>
                     Total de Usuários
@@ -35,7 +35,7 @@
             </v-card>
         
         
-            <v-card id="cardRent" elevation="12" color="deep-purple" dark>
+            <v-card id="cardRent" elevation="12" color="#b67dbe" dark>
                 <v-card-title>
                     <v-icon size="25" class="mr-1">mdi-calendar-blank-multiple</v-icon>
                     Total de Aluguéis
@@ -45,7 +45,6 @@
                     <p class="text-h6" dark>↪ {{ rents }}</p>
                 </v-card-text>
             </v-card>
-        
     </v-row>
 </template>
 
@@ -99,25 +98,23 @@ export default {
 <style>
 #cardBook{
     margin-left: 40px;
-    margin-top: 40px;
+    margin-top: 20px;
     padding: 20px;
-
 }
 #user{
-    margin-left: 45px;
-    margin-top: 40px;
+    margin-left: 40px;
+    margin-top: 20px;
     padding: 20px;
 }
 #cardEdit{
     margin-left: 40px;
-    margin-top: 40px;
+    margin-top: 20px;
     padding: 20px;
 }
 #cardRent{
     margin-left: 40px;
-    margin-top: 40px;
+    margin-top: 20px;
     padding: 20px;
-    
 }
 
 </style>

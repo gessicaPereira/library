@@ -270,7 +270,7 @@
           })
         },  
         showAlertSuccessPost() {
-        this.$swal("", "Editora cadastradoa com sucesso!", "success");
+        this.$swal("", "Editora cadastrada com sucesso!", "success");
       },
   
       showAlertSuccessDelete() {

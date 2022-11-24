@@ -325,13 +325,13 @@ import usersService from '@/service/usersService'
   margin-top: -325x;
 }
 #fundo{
-  background-color:	#8470FF ;
+  background-color:	#f6cffc ;
 }
 #btn{
-  background-color: #6A5ACD;
+  background-color: 	#b67dbe ;
 }
 #btn2{
    
-  color: #6A5ACD;
+  color:	#b67dbe ;
 }
 </style>

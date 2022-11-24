@@ -1,7 +1,11 @@
 <template>
+    <div class="chart">
   <v-row justify="center" class="mt-5">
-      <apexchart id="chart" type="pie" v-if="!loading" width="500" ref="chart" :options="options" :series="series"></apexchart>
+    <v-col>
+      <apexchart type="pie"  v-if="!loading" width="500" ref="chart" :options="options" :series="series"></apexchart>
+  </v-col>
   </v-row>
+    </div>
 </template>
 
 <script>
@@ -82,8 +86,16 @@ export default {
 };
 </script>
 <style scoped>
-#chart{
- background-color: white;
- margin-top: -35px;
-}
+.chart {
+    display: inline-block;
+    width: 420px;
+    position: relative;
+    bottom: 20px;
+    margin: 60px 0 0 70px;
+    padding: 10px;
+    padding-bottom: 0px;
+    border-radius: 10px;
+  }
+  
+
 </style>
